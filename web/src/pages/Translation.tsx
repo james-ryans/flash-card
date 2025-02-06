@@ -1,9 +1,13 @@
 import React from "react";
 import { Form, VisuallyHidden } from "radix-ui";
-import { Cross1Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import {
+  ChevronRightIcon,
+  Cross1Icon,
+  ExclamationTriangleIcon,
+} from "@radix-ui/react-icons";
 import { AxiosError } from "axios";
 import { LoadingIcon } from "../assets/icons/LoadingIcon";
-import { translate, TranslationResponse } from "../requests/translation";
+import { Language, translate, TranslationResponse } from "../requests/translation";
 import { ErrorResponse } from "../requests/common";
 
 enum ResultState {
@@ -39,7 +43,7 @@ function Translation() {
         error: "",
       });
 
-      translate({ text })
+      translate({ text, from: Language.EN, to: Language.ID })
         .then((response: TranslationResponse) => {
           setResult({
             state: ResultState.Success,
@@ -51,7 +55,10 @@ function Translation() {
           setResult({
             state: ResultState.Error,
             data: "",
-            error: error.response?.data.message || error.message,
+            error:
+              (Array.isArray(error.response?.data.message)
+                ? error.response?.data.message[0]
+                : error.response?.data.message) || error.message,
           });
         });
       inputRef.current?.select();
@@ -72,33 +79,44 @@ function Translation() {
   };
 
   return (
-    <Form.Root onSubmit={handleSubmit} className="mt-16 grid grid-cols-2 gap-4">
-      <Form.Field name="source">
-        <div className="relative flex flex-col gap-2">
-          <Form.Control asChild>
-            <input
-              ref={inputRef}
-              className="h-32 w-full rounded-sm border border-gray-300 p-8 text-3xl data-invalid:border-red-500"
-              value={text}
-              onChange={handleInput}
-              required
-            />
-          </Form.Control>
-          {text !== "" && (
-            <button
-              className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
-              type="button"
-              onClick={handleReset}
-            >
-              <Cross1Icon width="18" height="18" />
-            </button>
-          )}
-          <Form.Message match="valueMissing" className="text-red-500">
-            Please enter your text
-          </Form.Message>
-        </div>
-      </Form.Field>
-      <ResultBox state={result.state} data={result.data} error={result.error} />
+    <Form.Root onSubmit={handleSubmit} className="mt-16 flex flex-col gap-2">
+      <div className="mx-4 flex items-center gap-4">
+        <p className="w-24 grow font-medium">English</p>
+        <ChevronRightIcon width="18" height="18" />
+        <p className="w-24 grow font-medium">Indonesian</p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <Form.Field name="source">
+          <div className="relative flex flex-col gap-2">
+            <Form.Control asChild>
+              <input
+                ref={inputRef}
+                className="h-32 w-full rounded-sm border border-gray-300 p-8 text-3xl data-invalid:border-red-500"
+                value={text}
+                onChange={handleInput}
+                required
+              />
+            </Form.Control>
+            {text !== "" && (
+              <button
+                className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
+                type="button"
+                onClick={handleReset}
+              >
+                <Cross1Icon width="18" height="18" />
+              </button>
+            )}
+            <Form.Message match="valueMissing" className="text-red-500">
+              Please enter your text
+            </Form.Message>
+          </div>
+        </Form.Field>
+        <ResultBox
+          state={result.state}
+          data={result.data}
+          error={result.error}
+        />
+      </div>
       <VisuallyHidden.Root asChild>
         <button type="submit" />
       </VisuallyHidden.Root>

@@ -1,7 +1,14 @@
 import axios, { AxiosResponse } from "axios";
 
+enum Language {
+  EN = "en",
+  ID = "id",
+}
+
 interface TranslationRequest {
   text: string;
+  from: Language;
+  to: Language;
 };
 
 interface TranslationResponse {
@@ -18,5 +25,5 @@ async function translate(
   });
 }
 
-export { translate };
+export { translate, Language };
 export type { TranslationRequest, TranslationResponse };
