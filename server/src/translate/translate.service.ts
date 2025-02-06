@@ -1,6 +1,6 @@
 import { v2 as translateV2 } from '@google-cloud/translate';
 import { Injectable } from '@nestjs/common';
-import { Translation } from './translate.model';
+import { Language } from './translate.model';
 
 @Injectable()
 export class TranslateService {
@@ -10,12 +10,12 @@ export class TranslateService {
         this.translate = new translateV2.Translate();
     }
 
-    async translation(text: string): Promise<Translation> {
+    async translation(text: string, from: Language, to: Language): Promise<string> {
         const [translation] = await this.translate.translate(text, {
-            from: 'id',
-            to: 'en'
+            from: from.toString(),
+            to: to.toString(),
         });
 
-        return new Translation(translation);
+        return translation;
     }
 }
