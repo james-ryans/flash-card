@@ -40,4 +40,7 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+bootstrap().catch((error) => {
+    console.error('Error during bootstrap:', error);
+    process.exit(1);
+});

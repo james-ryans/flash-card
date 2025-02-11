@@ -9,6 +9,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const result: boolean = await super.canActivate(context);
         await super.logIn(super.getRequest(context));
         return result;
@@ -17,7 +18,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     handleRequest<TUser = PlainUser>(
         err: Error,
         user: TUser | null,
-        info: any,
+        info: Record<'message', string> | null,
         context: ExecutionContext,
         status?: number,
     ): TUser {
