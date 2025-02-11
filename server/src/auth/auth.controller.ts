@@ -6,7 +6,7 @@ import { Request } from 'express';
 export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(): Promise<any> {
+    login(): any {
         return {
             message: 'Login successful',
             statusCode: HttpStatus.OK,
@@ -14,7 +14,7 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@Req() req: Request): Promise<any> {
+    logout(@Req() req: Request): any {
         req.session.destroy((err: Error) => {
             if (err) {
                 throw err;
