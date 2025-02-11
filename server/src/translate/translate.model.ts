@@ -1,8 +1,8 @@
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export enum Language {
-    EN = "en",
-    ID = "id",
+    EN = 'en',
+    ID = 'id',
 }
 
 export class TranslateRequest {
@@ -27,7 +27,7 @@ export class TranslationResponse {
 
     constructor(text: string) {
         this.data = {
-            text
+            text,
         };
     }
 }

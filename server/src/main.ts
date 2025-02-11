@@ -1,11 +1,43 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { RedisStore } from 'connect-redis';
+import * as redis from 'redis';
+import session from 'express-session';
+import passport from 'passport';
+import process from 'process';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(process.env.PORT ?? 3000);
+    const app = await NestFactory.create(AppModule);
+    app.enableCors();
+
+    if (process.env.SESSION_SECRET === undefined) {
+        throw new Error('SESSION_SECRET is required');
+    }
+    const redisClient = redis.createClient({
+        url: process.env.REDIS_URL ?? 'redis://localhost:6379',
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+    });
+    redisClient.connect().catch((err: Error) => {
+        throw new Error(`Failed to connect to Redis: ${err.message}`);
+    });
+    const redisStore = new RedisStore({
+        client: redisClient,
+    });
+
+    app.use(
+        session({
+            store: redisStore,
+            secret: process.env.SESSION_SECRET,
+            resave: Boolean(process.env.SESSION_RESAVE),
+            saveUninitialized: Boolean(process.env.SESSION_SAVE_UNINITIALIZED),
+            cookie: { maxAge: +(process.env.SESSION_COOKIE_MAX_AGE ?? '3600000') },
+        }),
+    );
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.useGlobalPipes(new ValidationPipe());
+    await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
