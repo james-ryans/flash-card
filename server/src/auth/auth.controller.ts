@@ -15,11 +15,14 @@ export class AuthController {
 
     @Post('logout')
     async logout(@Req() req: Request): Promise<any> {
-        req.session.destroy(() => {
-            return {
-                message: 'Logout successful',
-                statusCode: HttpStatus.OK,
-            };
+        req.session.destroy((err: Error) => {
+            if (err) {
+                throw err;
+            }
         });
+        return {
+            message: 'Logout successful',
+            statusCode: HttpStatus.OK,
+        };
     }
 }
