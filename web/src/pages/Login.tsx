@@ -29,7 +29,7 @@ function Login() {
                         <Form.Control asChild>
                           <TextField.Root
                             size="3"
-                            color={validity?.valueMissing ? 'red' : undefined}
+                            color={validity?.valueMissing || validity?.typeMismatch ? 'red' : undefined}
                             placeholder="Email"
                             type="email"
                             required
@@ -40,6 +40,11 @@ function Login() {
                     <Form.Message match="valueMissing" asChild>
                       <Text size="1" as="label" color="red">
                         Please enter your email
+                      </Text>
+                    </Form.Message>
+                    <Form.Message match="typeMismatch" asChild>
+                      <Text size="1" as="label" color="red">
+                        Please enter a valid email
                       </Text>
                     </Form.Message>
                   </Form.Field>
