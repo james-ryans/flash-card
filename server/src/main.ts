@@ -9,7 +9,10 @@ import process from 'process';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.enableCors();
+    app.enableCors({
+        origin: process.env.CORS_ORIGIN ?? '*',
+        credentials: process.env.CORS_CREDENTIALS === 'true',
+    });
 
     if (process.env.SESSION_SECRET === undefined) {
         throw new Error('SESSION_SECRET is required');
