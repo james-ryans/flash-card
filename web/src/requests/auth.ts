@@ -1,11 +1,17 @@
 import axios from 'axios';
+import { Response } from './common';
+import { User } from '../models/user';
 
 type LoginRequest = {
   email: string;
   password: string;
 };
 
-type LoginResponse = Response;
+type LoginResponse = Response & {
+  data: User;
+};
+
+type VerifyResponse = LoginResponse;
 
 async function login(request: LoginRequest) {
   return await axios.post(import.meta.env.VITE_SERVER_BASE_URL + '/auth/login', request, {
@@ -17,10 +23,14 @@ async function login(request: LoginRequest) {
 }
 
 async function verify() {
-  return await axios.post(import.meta.env.VITE_SERVER_BASE_URL + '/auth/verify', {
-    withCredentials: true,
-  });
+  return await axios.post(
+    import.meta.env.VITE_SERVER_BASE_URL + '/auth/verify',
+    {},
+    {
+      withCredentials: true,
+    },
+  );
 }
 
 export { login, verify };
-export type { LoginRequest, LoginResponse };
+export type { LoginRequest, LoginResponse, VerifyResponse };

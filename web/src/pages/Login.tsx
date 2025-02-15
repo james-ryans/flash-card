@@ -4,28 +4,23 @@ import React from 'react';
 import { AxiosError } from 'axios';
 import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../requests/common';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
-import { login, LoginRequest } from '../requests/auth';
-import { useNavigate } from 'react-router';
+import { LoginRequest } from '../requests/auth';
+import { useAuth } from '../contexts/auth';
 
 function Login() {
-  const navigate = useNavigate();
   const [data, setData] = React.useState<LoginRequest>({
     email: '',
     password: '',
   });
   const [error, setError] = React.useState<ErrorResponse | null>(null);
 
+  const auth = useAuth();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    login(data)
-      .then(() => {
-        setError(null);
-        navigate('/');
-      })
-      .catch((error: AxiosError<ErrorResponse>) => {
-        setError(error.response?.data ?? DEFAULT_ERROR_RESPONSE);
-      });
+    auth.onLogin(data).catch((error: AxiosError<ErrorResponse>) => {
+      setError(error.response?.data || DEFAULT_ERROR_RESPONSE);
+    });
   };
 
   return (
