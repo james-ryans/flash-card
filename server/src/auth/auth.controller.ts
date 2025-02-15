@@ -1,13 +1,18 @@
 import { Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local.guard';
 import { Request } from 'express';
+import { AuthUser, LoginResponse, VerifyResponse } from './auth.model';
+import { User } from 'src/user/user.model';
 
 @Controller('auth')
 export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    login(): any {
+    login(@Req() req: Request): LoginResponse {
+        const user = new AuthUser(req.user!);
+
         return {
+            data: user,
             message: 'Login successful',
             statusCode: HttpStatus.OK,
         };
@@ -28,15 +33,18 @@ export class AuthController {
 
     @Post('verify')
     @HttpCode(HttpStatus.OK)
-    verify(@Req() req: Request): any {
-        Logger.log(req.user);
+    verify(@Req() req: Request): VerifyResponse {
         if (req.user === undefined) {
             return {
+                data: undefined,
                 message: 'User not verified',
                 statusCode: HttpStatus.UNAUTHORIZED,
             };
         }
+
+        const user = new AuthUser(req.user);
         return {
+            data: user,
             message: 'User verified',
             statusCode: HttpStatus.OK,
         };
