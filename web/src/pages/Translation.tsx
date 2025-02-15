@@ -5,7 +5,7 @@ import {
   Cross1Icon,
   ExclamationTriangleIcon,
 } from "@radix-ui/react-icons";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { LoadingIcon } from "../assets/icons/LoadingIcon";
 import { Language, translate, TranslationResponse } from "../requests/translation";
 import { ErrorResponse } from "../requests/common";
@@ -44,10 +44,10 @@ function Translation() {
       });
 
       translate({ text, from: Language.EN, to: Language.ID })
-        .then((response: TranslationResponse) => {
+        .then((response: AxiosResponse<TranslationResponse>) => {
           setResult({
             state: ResultState.Success,
-            data: response.data.text,
+            data: response.data.data.text,
             error: "",
           });
         })

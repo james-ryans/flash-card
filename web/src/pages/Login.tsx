@@ -1,9 +1,31 @@
-import { Box, Button, Card, Container, Flex, Heading, Text, TextField } from '@radix-ui/themes';
+import { Box, Button, Callout, Card, Container, Flex, Heading, Text, TextField } from '@radix-ui/themes';
 import { Form } from 'radix-ui';
+import React from 'react';
+import { AxiosError } from 'axios';
+import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../requests/common';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { login, LoginRequest } from '../requests/auth';
+import { useNavigate } from 'react-router';
 
 function Login() {
+  const navigate = useNavigate();
+  const [data, setData] = React.useState<LoginRequest>({
+    email: '',
+    password: '',
+  });
+  const [error, setError] = React.useState<ErrorResponse | null>(null);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    login(data)
+      .then(() => {
+        setError(null);
+        navigate('/');
+      })
+      .catch((error: AxiosError<ErrorResponse>) => {
+        setError(error.response?.data ?? DEFAULT_ERROR_RESPONSE);
+      });
   };
 
   return (
@@ -15,6 +37,14 @@ function Login() {
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow">
             <Flex align="center" gap="4" direction="column">
+              {error && (
+                <Callout.Root color="red" className="w-full">
+                  <Callout.Icon>
+                    <InfoCircledIcon />
+                  </Callout.Icon>
+                  <Callout.Text>{error.message}</Callout.Text>
+                </Callout.Root>
+              )}
               <Heading size="6">Sign In</Heading>
               <Flex direction="column" gap="4" width="100%" asChild>
                 <Form.Root onSubmit={handleSubmit}>
@@ -32,6 +62,8 @@ function Login() {
                             color={validity?.valueMissing || validity?.typeMismatch ? 'red' : undefined}
                             placeholder="Email"
                             type="email"
+                            value={data.email}
+                            onChange={(event) => setData({ ...data, email: event.target.value })}
                             required
                           />
                         </Form.Control>
@@ -62,6 +94,8 @@ function Login() {
                             color={validity?.valueMissing ? 'red' : undefined}
                             placeholder="Password"
                             type="password"
+                            value={data.password}
+                            onChange={(event) => setData({ ...data, password: event.target.value })}
                             required
                           />
                         </Form.Control>
