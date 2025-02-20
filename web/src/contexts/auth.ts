@@ -1,22 +1,22 @@
 import React from 'react';
 import { User } from '../models/user';
-import { LoginRequest } from '../requests/auth';
-
-const useAuth = () => {
-  return React.useContext(AuthContext);
-};
+import { LoginRequest } from '../models/auth';
 
 const AuthContext = React.createContext<{
   user: User | null;
-  verify: () => void;
-  onLogin: (request: LoginRequest) => Promise<void>;
-  onLogout: () => void;
+  verify: () => Promise<void>;
+  login: (request: LoginRequest) => Promise<void>;
+  logout: () => Promise<void>;
 }>({
   user: null,
-  verify: () => {},
-  onLogin: async () => {},
-  onLogout: () => {},
+  verify: () => Promise.resolve(),
+  login: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
 });
+AuthContext.displayName = 'AuthContext';
 
-export default AuthContext;
-export { useAuth };
+function useAuth() {
+  return React.useContext(AuthContext);
+}
+
+export { AuthContext, useAuth };

@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from 'react-router';
+import React from 'react';
 import { useAuth } from '../contexts/auth';
 
-function PrivateRoute() {
-  const { user, verify } = useAuth();
+function PrivateRoute(): React.ReactElement {
+  const { user } = useAuth();
 
-  verify();
   if (!user) {
     return <Navigate to="/login" />;
   }

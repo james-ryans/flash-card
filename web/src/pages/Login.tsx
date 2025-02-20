@@ -4,8 +4,9 @@ import React from 'react';
 import { AxiosError } from 'axios';
 import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../requests/common';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
-import { LoginRequest } from '../requests/auth';
 import { useAuth } from '../contexts/auth';
+import { LoginRequest } from '../models/auth';
+import { useNavigate } from 'react-router';
 
 function Login() {
   const [data, setData] = React.useState<LoginRequest>({
@@ -14,13 +15,20 @@ function Login() {
   });
   const [error, setError] = React.useState<ErrorResponse | null>(null);
 
+  const navigate = useNavigate();
   const auth = useAuth();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    auth.onLogin(data).catch((error: AxiosError<ErrorResponse>) => {
-      setError(error.response?.data || DEFAULT_ERROR_RESPONSE);
-    });
+    auth
+      .login(data)
+      .then(() => {
+        setError(null);
+        navigate('/');
+      })
+      .catch((error: AxiosError<ErrorResponse>) => {
+        setError(error.response?.data || DEFAULT_ERROR_RESPONSE);
+      });
   };
 
   return (

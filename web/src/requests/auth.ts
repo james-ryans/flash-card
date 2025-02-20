@@ -1,20 +1,8 @@
-import axios from 'axios';
-import { Response } from './common';
-import { User } from '../models/user';
+import axios, { AxiosResponse } from 'axios';
+import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
 
-type LoginRequest = {
-  email: string;
-  password: string;
-};
-
-type LoginResponse = Response & {
-  data: User;
-};
-
-type VerifyResponse = LoginResponse;
-
-async function login(request: LoginRequest) {
-  return await axios.post(import.meta.env.VITE_SERVER_BASE_URL + '/auth/login', request, {
+function login(request: LoginRequest): Promise<AxiosResponse<LoginResponse>> {
+  return axios.post(import.meta.env.VITE_SERVER_BASE_URL + '/auth/login', request, {
     withCredentials: true,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,8 +10,18 @@ async function login(request: LoginRequest) {
   });
 }
 
-async function verify() {
-  return await axios.post(
+function logout(): Promise<AxiosResponse<void>> {
+  return axios.post(
+    import.meta.env.VITE_SERVER_BASE_URL + '/auth/logout',
+    {},
+    {
+      withCredentials: true,
+    },
+  );
+}
+
+function verify(): Promise<AxiosResponse<VerifyResponse>> {
+  return axios.post(
     import.meta.env.VITE_SERVER_BASE_URL + '/auth/verify',
     {},
     {
@@ -32,5 +30,4 @@ async function verify() {
   );
 }
 
-export { login, verify };
-export type { LoginRequest, LoginResponse, VerifyResponse };
+export { login, logout, verify };
