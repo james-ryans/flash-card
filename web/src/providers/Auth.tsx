@@ -29,8 +29,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   });
 
   React.useEffect(() => {
-    setData({ user: null, status: Status.Loading });
-
+    setData({ user, status: Status.Loading });
     auth
       .verify()
       .then((response: AxiosResponse<VerifyResponse>) => {
@@ -47,6 +46,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const login = React.useCallback(
     (request: LoginRequest) => {
+      setData({ user, status: Status.Loading });
       return auth.login(request).then((response: AxiosResponse<LoginResponse>) => {
         setData({ user: response.data.data, status: Status.Success });
         return response;
@@ -56,8 +56,9 @@ function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const logout = React.useCallback(() => {
+    setData({ user, status: Status.Loading });
     return auth.logout().then(() => {
-      setData({ user: null, status: Status.Idle });
+      setData({ user: null, status: Status.Success });
     });
   }, [setData]);
 

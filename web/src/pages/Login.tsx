@@ -38,7 +38,7 @@ function Login() {
           <Heading size="8" className="py-8">
             Flash Card
           </Heading>
-          <Card variant="surface" size="3" className="w-full rounded-xl shadow">
+          <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
             <Flex align="center" gap="4" direction="column">
               {error && (
                 <Callout.Root color="red" className="w-full">
