@@ -1,19 +1,15 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
-import "./styles/index.css";
-import "./styles/tailwind.css";
-import Translation from "./pages/Translation";
-import BaseLayout from "./layouts/BaseLayout";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import '@radix-ui/themes/styles.css';
+import './styles/index.css';
+import './styles/tailwind.css';
+import { Theme } from '@radix-ui/themes';
+import App from './app';
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<BaseLayout />}>
-          <Route index element={<Translation />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Theme>
+      <App />
+    </Theme>
   </StrictMode>,
 );

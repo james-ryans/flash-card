@@ -1,14 +1,10 @@
-import React from "react";
-import { Form, VisuallyHidden } from "radix-ui";
-import {
-  ChevronRightIcon,
-  Cross1Icon,
-  ExclamationTriangleIcon,
-} from "@radix-ui/react-icons";
-import { AxiosError } from "axios";
-import { LoadingIcon } from "../assets/icons/LoadingIcon";
-import { Language, translate, TranslationResponse } from "../requests/translation";
-import { ErrorResponse } from "../requests/common";
+import React from 'react';
+import { Form, VisuallyHidden } from 'radix-ui';
+import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { AxiosError, AxiosResponse } from 'axios';
+import { LoadingIcon } from '../assets/icons/LoadingIcon';
+import { Language, translate, TranslationResponse } from '../requests/translation';
+import { ErrorResponse } from '../requests/common';
 
 enum ResultState {
   Idle,
@@ -24,11 +20,11 @@ type ResultProps = {
 };
 
 function Translation() {
-  const [text, setText] = React.useState("");
+  const [text, setText] = React.useState('');
   const [result, setResult] = React.useState<ResultProps>({
     state: ResultState.Idle,
-    data: "",
-    error: "",
+    data: '',
+    error: '',
   });
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -36,25 +32,25 @@ function Translation() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (text !== "") {
+    if (text !== '') {
       setResult({
         state: ResultState.Loading,
-        data: "",
-        error: "",
+        data: '',
+        error: '',
       });
 
       translate({ text, from: Language.EN, to: Language.ID })
-        .then((response: TranslationResponse) => {
+        .then((response: AxiosResponse<TranslationResponse>) => {
           setResult({
             state: ResultState.Success,
-            data: response.data.text,
-            error: "",
+            data: response.data.data.text,
+            error: '',
           });
         })
         .catch((error: AxiosError<ErrorResponse>) => {
           setResult({
             state: ResultState.Error,
-            data: "",
+            data: '',
             error:
               (Array.isArray(error.response?.data.message)
                 ? error.response?.data.message[0]
@@ -66,15 +62,15 @@ function Translation() {
   };
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value.replace(/ /g, ""));
+    setText(event.target.value.replace(/ /g, ''));
   };
 
   const handleReset = () => {
-    setText("");
+    setText('');
     setResult({
       state: ResultState.Idle,
-      data: "",
-      error: "",
+      data: '',
+      error: '',
     });
   };
 
@@ -97,7 +93,7 @@ function Translation() {
                 required
               />
             </Form.Control>
-            {text !== "" && (
+            {text !== '' && (
               <button
                 className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
                 type="button"
@@ -111,11 +107,7 @@ function Translation() {
             </Form.Message>
           </div>
         </Form.Field>
-        <ResultBox
-          state={result.state}
-          data={result.data}
-          error={result.error}
-        />
+        <ResultBox state={result.state} data={result.data} error={result.error} />
       </div>
       <VisuallyHidden.Root asChild>
         <button type="submit" />
