@@ -12,10 +12,10 @@ export type LoginResponse = {
     data?: AuthUser;
     message: string;
     statusCode: number;
-}
+};
 
 export type VerifyResponse = {
     data?: AuthUser;
     message: string;
     statusCode: number;
-}
+};

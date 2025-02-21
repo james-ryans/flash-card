@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { SessionAuthGuard } from './guards/session.guard';
 import { TranslateModule } from './translate/translate.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { KnexModule } from './knex/knex.module';
+import { RecentModule } from './recent/recent.module';
 
 @Module({
     imports: [
@@ -22,6 +25,13 @@ import { KnexModule } from './knex/knex.module';
         UserModule,
         AuthModule,
         TranslateModule,
+        RecentModule,
+    ],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: SessionAuthGuard,
+        },
     ],
 })
 export class AppModule {}
