@@ -4,44 +4,75 @@ import * as auth from '../requests/auth';
 import { User } from '../models/user';
 import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
 import { AuthContext } from '../contexts/auth';
+import Loading from '../pages/Loading';
 
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
-function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = React.useState<User | null>(null);
+enum Status {
+  Idle = 'idle',
+  Loading = 'loading',
+  Error = 'error',
+  Success = 'success',
+}
 
-  const verify = React.useCallback(() => {
-    return auth.verify().then((response: AxiosResponse<VerifyResponse>) => {
-      setUser(response.data.data);
-    });
-  }, [setUser]);
+type AuthState = {
+  status: Status;
+  user: User | null;
+};
+
+function AuthProvider({ children }: AuthProviderProps) {
+  const [{ status, user }, setData] = React.useState<AuthState>({
+    status: Status.Idle,
+    user: null,
+  });
+
+  React.useEffect(() => {
+    setData({ user: null, status: Status.Loading });
+
+    auth
+      .verify()
+      .then((response: AxiosResponse<VerifyResponse>) => {
+        if (response.data.statusCode !== 200) {
+          throw new Error(response.data.message);
+        }
+        setData({ user: response.data.data, status: Status.Success });
+        return response;
+      })
+      .catch(() => {
+        setData({ user: null, status: Status.Error });
+      });
+  }, []);
 
   const login = React.useCallback(
     (request: LoginRequest) => {
       return auth.login(request).then((response: AxiosResponse<LoginResponse>) => {
-        setUser(response.data.data);
+        setData({ user: response.data.data, status: Status.Success });
+        return response;
       });
     },
-    [setUser],
+    [setData],
   );
 
   const logout = React.useCallback(() => {
     return auth.logout().then(() => {
-      setUser(null);
+      setData({ user: null, status: Status.Idle });
     });
-  }, [setUser]);
+  }, [setData]);
 
   const value = React.useMemo(
     () => ({
       user,
-      verify,
       login,
       logout,
     }),
-    [user, verify, login, logout],
+    [user, login, logout],
   );
+
+  if (status === Status.Idle || status === Status.Loading) {
+    return <Loading />;
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

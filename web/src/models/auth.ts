@@ -1,3 +1,4 @@
+import { Response } from './common';
 import { User } from './user';
 
 type LoginRequest = {
