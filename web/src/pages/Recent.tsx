@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box, Flex, Heading, IconButton, Separator, Text } from '@radix-ui/themes';
-import Translation from './Translation';
-import { recent, RecentResponse, Recent as RecentType } from '../requests/recent';
+import { Box, Container, Flex, Heading, IconButton, Separator, Text } from '@radix-ui/themes';
 import { AxiosResponse } from 'axios';
-import { Cross1Icon } from '@radix-ui/react-icons';
+import { Cross1Icon, LapTimerIcon } from '@radix-ui/react-icons';
 import { Link } from 'react-router';
+import TextTranslation from '../components/TextTranslation';
+import { recent, RecentResponse, Recent as RecentType } from '../requests/recent';
 
 function Recent() {
   const [recents, setRecents] = React.useState<RecentType[]>([]);
@@ -24,7 +24,25 @@ function Recent() {
   return (
     <Flex height="calc(100vh - 52px)">
       <Box px="4" className="flex-3/4">
-        <Translation onSubmitSuccess={onTranslationSuccess} />
+        <Container>
+          <Flex direction="column" gap="6">
+            <TextTranslation onSubmitSuccess={onTranslationSuccess} />
+            <Flex justify="end">
+              <Link to="/">
+                <IconButton
+                  tabIndex={-1}
+                  size="4"
+                  radius="full"
+                  variant="surface"
+                  color="indigo"
+                  className="outline-none"
+                >
+                  <LapTimerIcon width="20" height="20" />
+                </IconButton>
+              </Link>
+            </Flex>
+          </Flex>
+        </Container>
       </Box>
       <Separator orientation="vertical" size="4" />
       <Flex direction="column" className="flex-1/4">
