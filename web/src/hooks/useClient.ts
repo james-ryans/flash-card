@@ -9,8 +9,8 @@ enum Status {
 
 interface State<T = any> {
   status: Status;
-  data: T | null;
-  error: string | null;
+  data?: T;
+  error?: string;
 }
 
 type Action<T> =
@@ -30,30 +30,26 @@ interface Client<T> extends State<T> {
 
 const defaultInitialState: State = {
   status: Status.Idle,
-  data: null,
-  error: null,
 };
 
-function useClient<T = any>(initialState: State<T> | null = null): Client<T> {
-  const initialStateRef = React.useRef({
-    ...defaultInitialState,
-    ...initialState,
-  });
-
-  const [state, dispatch] = React.useReducer((state: State<T>, action: Action<T>) => {
-    switch (action.type) {
-      case Status.Idle:
-        return { ...initialStateRef.current, status: Status.Idle };
-      case Status.Loading:
-        return { ...initialStateRef.current, status: Status.Loading };
-      case Status.Success:
-        return { ...initialStateRef.current, status: Status.Success, data: action.data };
-      case Status.Error:
-        return { ...initialStateRef.current, status: Status.Error, error: action.error };
-      default:
-        return state;
-    }
-  }, initialStateRef.current);
+function useClient<T = any>(initialState?: State<T>): Client<T> {
+  const [state, dispatch] = React.useReducer(
+    (state: State<T>, action: Action<T>) => {
+      switch (action.type) {
+        case Status.Idle:
+          return { status: Status.Idle };
+        case Status.Loading:
+          return { status: Status.Loading };
+        case Status.Success:
+          return { status: Status.Success, data: action.data };
+        case Status.Error:
+          return { status: Status.Error, error: action.error };
+        default:
+          return state;
+      }
+    },
+    initialState ?? defaultInitialState,
+  );
 
   const reset = React.useCallback(() => dispatch({ type: Status.Idle }), [dispatch]);
 
@@ -84,4 +80,4 @@ function useClient<T = any>(initialState: State<T> | null = null): Client<T> {
   };
 }
 
-export { useClient };
+export { useClient, Status };

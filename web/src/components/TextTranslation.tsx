@@ -4,16 +4,39 @@ import { Form, VisuallyHidden } from 'radix-ui';
 import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { translate } from '../requests/translation';
-import { useClient } from '../hooks/useClient';
+import { Status, useClient } from '../hooks/useClient';
 import { Language } from '../models/translation';
+import { useLocation } from 'react-router';
+
+type TextTranslationHandle = {
+  text: () => string;
+  translation: () => string | undefined;
+};
 
 type TextTranslationProps = {
+  refs: React.Ref<TextTranslationHandle>;
   onSubmitSuccess?: () => void;
 };
 
-function TextTranslation({ onSubmitSuccess }: TextTranslationProps) {
-  const [text, setText] = React.useState('');
-  const { isIdle, isLoading, isSuccess, isError, data, error, update, reset } = useClient<string>();
+function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
+  const location = useLocation();
+  const initialText = location.state?.text ?? '';
+  const initialTranslation = location.state?.translation ?? '';
+
+  const [text, setText] = React.useState(initialText);
+  const { isIdle, isLoading, isSuccess, isError, data, error, update, reset } = useClient<string>({
+    status: initialTranslation === '' ? Status.Idle : Status.Success,
+    data: initialTranslation,
+  });
+
+  React.useImperativeHandle(refs, () => ({
+    text: () => {
+      return text;
+    },
+    translation: () => {
+      return data;
+    },
+  }));
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -116,3 +139,4 @@ function TextTranslation({ onSubmitSuccess }: TextTranslationProps) {
 }
 
 export default TextTranslation;
+export type { TextTranslationHandle };

@@ -2,23 +2,32 @@ import React from 'react';
 import { Box, Container, Flex, Heading, IconButton, Separator, Text } from '@radix-ui/themes';
 import { AxiosResponse } from 'axios';
 import { Cross1Icon, LapTimerIcon } from '@radix-ui/react-icons';
-import { Link } from 'react-router';
-import TextTranslation from '../components/TextTranslation';
+import { Link, useNavigate } from 'react-router';
+import TextTranslation, { TextTranslationHandle } from '../components/TextTranslation';
 import { recent, RecentResponse, Recent as RecentType } from '../requests/recent';
 
 function Recent() {
   const [recents, setRecents] = React.useState<RecentType[]>([]);
 
-  React.useEffect(() => {
+  const updateRecent = () => {
     recent().then((response: AxiosResponse<RecentResponse>) => {
       setRecents(response.data.data);
     });
+  };
+
+  React.useEffect(() => {
+    window.history.replaceState({}, '');
+    updateRecent();
   }, []);
 
   const onTranslationSuccess = () => {
-    recent().then((response: AxiosResponse<RecentResponse>) => {
-      setRecents(response.data.data);
-    });
+    updateRecent();
+  };
+
+  const ref = React.useRef<TextTranslationHandle>(null);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/', { state: { text: ref.current?.text(), translation: ref.current?.translation() } });
   };
 
   return (
@@ -26,20 +35,19 @@ function Recent() {
       <Box px="4" className="flex-3/4">
         <Container>
           <Flex direction="column" gap="6">
-            <TextTranslation onSubmitSuccess={onTranslationSuccess} />
+            <TextTranslation refs={ref} onSubmitSuccess={onTranslationSuccess} />
             <Flex justify="end">
-              <Link to="/">
-                <IconButton
-                  tabIndex={-1}
-                  size="4"
-                  radius="full"
-                  variant="surface"
-                  color="indigo"
-                  className="outline-none"
-                >
-                  <LapTimerIcon width="20" height="20" />
-                </IconButton>
-              </Link>
+              <IconButton
+                tabIndex={-1}
+                size="4"
+                radius="full"
+                variant="surface"
+                color="indigo"
+                className="outline-none"
+                onClick={handleClick}
+              >
+                <LapTimerIcon width="20" height="20" />
+              </IconButton>
             </Flex>
           </Flex>
         </Container>
