@@ -58,11 +58,9 @@ function Recent() {
           <Heading as="h2" weight="medium">
             Recent
           </Heading>
-          <Link to="/">
-            <IconButton size="4" highContrast color="gray" variant="ghost" radius="full">
-              <Cross1Icon width="20" height="20" />
-            </IconButton>
-          </Link>
+          <IconButton size="4" highContrast color="gray" variant="ghost" radius="full" onClick={handleClick}>
+            <Cross1Icon width="20" height="20" />
+          </IconButton>
         </Flex>
         <Separator size="4" />
         <ul>
