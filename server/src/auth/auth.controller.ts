@@ -3,7 +3,9 @@ import { LocalAuthGuard } from 'src/guards/local.guard';
 import { Request } from 'express';
 import { AuthUser, LoginResponse, VerifyResponse } from './auth.model';
 import { User } from 'src/user/user.model';
+import { Public } from 'src/guards/session.guard';
 
+@Public()
 @Controller('auth')
 export class AuthController {
     @UseGuards(LocalAuthGuard)

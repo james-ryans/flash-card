@@ -1,6 +1,6 @@
 type User = {
-    name: string;
-    email: string;
-}
+  name: string;
+  email: string;
+};
 
 export type { User };

@@ -4,6 +4,7 @@ import BaseLayout from './layouts/BaseLayout';
 import Login from './pages/Login';
 import Translation from './pages/Translation';
 import { AuthProvider } from './providers/Auth';
+import Recent from './pages/Recent';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route element={<BaseLayout />}>
               <Route index element={<Translation />} />
+              <Route path="/recent" element={<Recent />} />
             </Route>
           </Route>
         </Routes>

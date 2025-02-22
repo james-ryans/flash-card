@@ -1,4 +1,4 @@
-import { Button, Container, DropdownMenu, Flex, Text } from '@radix-ui/themes';
+import { Button, DropdownMenu, Flex, Text } from '@radix-ui/themes';
 import { Outlet } from 'react-router';
 import { useAuth } from '../contexts/auth';
 import { CaretDownIcon, ExitIcon } from '@radix-ui/react-icons';
@@ -30,11 +30,7 @@ function BaseLayout() {
           </DropdownMenu.Root>
         </nav>
       </Flex>
-      <Container>
-        <Flex direction="column" gap="8">
-          <Outlet />
-        </Flex>
-      </Container>
+      <Outlet />
     </>
   );
 }

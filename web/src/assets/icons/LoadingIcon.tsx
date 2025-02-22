@@ -1,11 +1,11 @@
-import React from "react";
-import { IconProps } from "./types";
+import React from 'react';
+import { IconProps } from './types';
 
 export const LoadingIcon = React.forwardRef<SVGSVGElement, IconProps>(
-  ({ color = "currentColor", ...props }, forwardedRef) => {
+  ({ color = 'currentColor', ...props }, forwardedRef) => {
     return (
       <svg
-        className={"mr-3 -ml-1 size-5 animate-spin"}
+        className={'mr-3 -ml-1 size-5 animate-spin'}
         style={{ color }}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -13,14 +13,7 @@ export const LoadingIcon = React.forwardRef<SVGSVGElement, IconProps>(
         {...props}
         ref={forwardedRef}
       >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        ></circle>
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path
           className="opacity-75"
           fill="currentColor"
