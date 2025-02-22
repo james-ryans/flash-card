@@ -2,7 +2,7 @@ import { Box, Button, Callout, Card, Container, Flex, Heading, Text, TextField }
 import { Form } from 'radix-ui';
 import React from 'react';
 import { AxiosError } from 'axios';
-import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../requests/common';
+import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../models/common';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useAuth } from '../contexts/auth';
 import { LoginRequest } from '../models/auth';

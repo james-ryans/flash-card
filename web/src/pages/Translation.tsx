@@ -1,10 +1,12 @@
 import React from 'react';
 import { Form, VisuallyHidden } from 'radix-ui';
-import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon, LapTimerIcon } from '@radix-ui/react-icons';
 import { AxiosError, AxiosResponse } from 'axios';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { Language, translate, TranslationResponse } from '../requests/translation';
-import { ErrorResponse } from '../requests/common';
+import { ErrorResponse } from '../models/common';
+import { Container, Flex, Grid, IconButton, Text } from '@radix-ui/themes';
+import { Link, useLocation } from 'react-router';
 
 enum ResultState {
   Idle,
@@ -19,7 +21,13 @@ type ResultProps = {
   error: string;
 };
 
-function Translation() {
+type TranslationProps = {
+  onSubmitSuccess?: () => void;
+};
+
+function Translation({ onSubmitSuccess }: TranslationProps) {
+  const { pathname } = useLocation();
+
   const [text, setText] = React.useState('');
   const [result, setResult] = React.useState<ResultProps>({
     state: ResultState.Idle,
@@ -46,6 +54,7 @@ function Translation() {
             data: response.data.data.text,
             error: '',
           });
+          onSubmitSuccess?.();
         })
         .catch((error: AxiosError<ErrorResponse>) => {
           setResult({
@@ -75,44 +84,66 @@ function Translation() {
   };
 
   return (
-    <Form.Root onSubmit={handleSubmit} className="mt-16 flex flex-col gap-2">
-      <div className="mx-4 flex items-center gap-4">
-        <p className="w-24 grow font-medium">English</p>
-        <ChevronRightIcon width="18" height="18" />
-        <p className="w-24 grow font-medium">Indonesian</p>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <Form.Field name="source">
-          <div className="relative flex flex-col gap-2">
-            <Form.Control asChild>
-              <input
-                ref={inputRef}
-                className="h-32 w-full rounded-sm border border-gray-300 p-8 text-3xl data-invalid:border-red-500"
-                value={text}
-                onChange={handleInput}
-                required
-              />
-            </Form.Control>
-            {text !== '' && (
-              <button
-                className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
-                type="button"
-                onClick={handleReset}
-              >
-                <Cross1Icon width="18" height="18" />
-              </button>
-            )}
-            <Form.Message match="valueMissing" className="text-red-500">
-              Please enter your text
-            </Form.Message>
-          </div>
-        </Form.Field>
-        <ResultBox state={result.state} data={result.data} error={result.error} />
-      </div>
-      <VisuallyHidden.Root asChild>
-        <button type="submit" />
-      </VisuallyHidden.Root>
-    </Form.Root>
+    <Container>
+      <Flex direction="column" gap="6">
+        <Form.Root onSubmit={handleSubmit} className="mt-16 flex flex-col gap-2">
+          <Flex mx="4" gap="4" align="center">
+            <Text weight="medium" size="2" color="gray" className="w-24 grow">
+              English
+            </Text>
+            <ChevronRightIcon width="18" height="18" />
+            <Text weight="medium" size="2" color="gray" className="w-24 grow">
+              Indonesian
+            </Text>
+          </Flex>
+          <Grid columns="2" gap="4">
+            <Form.Field name="source">
+              <Flex position="relative" direction="column" gap="2">
+                <Form.Control asChild>
+                  <input
+                    ref={inputRef}
+                    className="h-32 w-full rounded-sm border border-gray-300 p-8 text-3xl data-invalid:border-red-500"
+                    value={text}
+                    onChange={handleInput}
+                    required
+                  />
+                </Form.Control>
+                {text !== '' && (
+                  <button
+                    className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
+                    type="button"
+                    onClick={handleReset}
+                  >
+                    <Cross1Icon width="18" height="18" />
+                  </button>
+                )}
+                <Form.Message match="valueMissing" className="text-red-500">
+                  Please enter your text
+                </Form.Message>
+              </Flex>
+            </Form.Field>
+            <ResultBox state={result.state} data={result.data} error={result.error} />
+          </Grid>
+          <VisuallyHidden.Root asChild>
+            <button type="submit" />
+          </VisuallyHidden.Root>
+        </Form.Root>
+        <Flex justify="end">
+          <Link to={pathname === '/recent' ? '/' : '/recent'}>
+            <IconButton
+              tabIndex={-1}
+              size="4"
+              radius="full"
+              variant={pathname === '/recent' ? 'surface' : 'outline'}
+              color={pathname === '/recent' ? 'blue' : 'gray'}
+              className="outline-none"
+            >
+              <LapTimerIcon width="20" height="20" />
+            </IconButton>
+          </Link>
+        </Flex>
+      </Flex>
+    </Container>
   );
 }
 
