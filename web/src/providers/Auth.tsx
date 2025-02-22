@@ -47,19 +47,30 @@ function AuthProvider({ children }: AuthProviderProps) {
   const login = React.useCallback(
     (request: LoginRequest) => {
       setData({ user, status: Status.Loading });
-      return auth.login(request).then((response: AxiosResponse<LoginResponse>) => {
-        setData({ user: response.data.data, status: Status.Success });
-        return response;
-      });
+      return auth
+        .login(request)
+        .then((response: AxiosResponse<LoginResponse>) => {
+          setData({ user: response.data.data, status: Status.Success });
+          return response;
+        })
+        .catch((error) => {
+          setData({ user: null, status: Status.Error });
+          throw error;
+        });
     },
     [setData],
   );
 
   const logout = React.useCallback(() => {
     setData({ user, status: Status.Loading });
-    return auth.logout().then(() => {
-      setData({ user: null, status: Status.Success });
-    });
+    return auth
+      .logout()
+      .then(() => {
+        setData({ user: null, status: Status.Success });
+      })
+      .catch(() => {
+        setData({ user, status: Status.Error });
+      });
   }, [setData]);
 
   const value = React.useMemo(
