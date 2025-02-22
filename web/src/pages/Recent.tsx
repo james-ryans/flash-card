@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Container, Flex, Heading, IconButton, Separator, Text } from '@radix-ui/themes';
 import { AxiosResponse } from 'axios';
 import { Cross1Icon, LapTimerIcon } from '@radix-ui/react-icons';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import TextTranslation, { TextTranslationHandle } from '../components/TextTranslation';
 import { recent, RecentResponse, Recent as RecentType } from '../requests/recent';
 

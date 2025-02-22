@@ -33,23 +33,20 @@ const defaultInitialState: State = {
 };
 
 function useClient<T = any>(initialState?: State<T>): Client<T> {
-  const [state, dispatch] = React.useReducer(
-    (state: State<T>, action: Action<T>) => {
-      switch (action.type) {
-        case Status.Idle:
-          return { status: Status.Idle };
-        case Status.Loading:
-          return { status: Status.Loading };
-        case Status.Success:
-          return { status: Status.Success, data: action.data };
-        case Status.Error:
-          return { status: Status.Error, error: action.error };
-        default:
-          return state;
-      }
-    },
-    initialState ?? defaultInitialState,
-  );
+  const [state, dispatch] = React.useReducer((state: State<T>, action: Action<T>) => {
+    switch (action.type) {
+      case Status.Idle:
+        return { status: Status.Idle };
+      case Status.Loading:
+        return { status: Status.Loading };
+      case Status.Success:
+        return { status: Status.Success, data: action.data };
+      case Status.Error:
+        return { status: Status.Error, error: action.error };
+      default:
+        return state;
+    }
+  }, initialState ?? defaultInitialState);
 
   const reset = React.useCallback(() => dispatch({ type: Status.Idle }), [dispatch]);
 
