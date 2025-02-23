@@ -1,11 +1,5 @@
 import { Box, Flex, Kbd, Table, Text } from '@radix-ui/themes';
-import {
-  useSprings,
-  animated,
-  to as interpolate,
-  SpringValue,
-  SpringRef,
-} from '@react-spring/web';
+import { useSprings, animated, to as interpolate, SpringValue, SpringRef } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import React from 'react';
 import { useClient } from '../hooks/useClient';
@@ -30,7 +24,7 @@ type CardSpringProps = {
 type CardProps = {
   front: string;
   back: string;
-}
+};
 
 const to = (i: number) => ({
   x: 0,
@@ -157,6 +151,15 @@ function FlashCard() {
             </Card>
           </animated.div>
         ))}
+        <Flex
+          height="160px"
+          width="400px"
+          justify="center"
+          align="center"
+          className="border border-dashed border-(--gray-4) bg-(--gray-1)"
+        >
+          <span className='text-2xl text-(--gray-7)'>No more cards</span>
+        </Flex>
       </Flex>
       <Box mx="auto" width="fit-content">
         <Table.Root>
