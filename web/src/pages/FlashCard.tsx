@@ -82,21 +82,20 @@ function FlashCard() {
   const cards = data ?? [];
   const gone = React.useRef(0);
 
-  React.useEffect(() => {
-    update(
-      recent().then((response: AxiosResponse<RecentResponse>): CardProps[] => {
-        return response.data.data.map((recent) => ({
-          front: recent.text,
-          back: recent.translation,
-        }));
-      }),
-    );
-  }, []);
-
   const [props, api] = useSprings(cards.length, (i) => ({
     from: from(i),
     to: to(i),
   }));
+
+  const reset = () => {
+    setTimeout(() => {
+      gone.current = 0;
+      api.start((i) => ({
+        to: to(i),
+        delay: i * 100,
+      }));
+    }, 600);
+  };
 
   const bind = useDrag(({ args: [index], down, movement: [xMove], direction: [xDir], velocity: [xVel] }) => {
     const flick = xVel > 0.2;
@@ -114,17 +113,45 @@ function FlashCard() {
 
     swipe(api, index, dir);
     gone.current++;
-
     if (gone.current === cards.length) {
-      setTimeout(() => {
-        gone.current = 0;
-        api.start((i) => ({
-          to: to(i),
-          delay: i * 100,
-        }));
-      }, 600);
+      reset();
     }
   });
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    switch (event.code) {
+      case 'Space':
+        flip(api, 4 - gone.current, props[4 - gone.current]);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowRight':
+        swipe(api, 4 - gone.current, event.code === 'ArrowLeft' ? -1 : 1);
+        gone.current++;
+        if (gone.current === cards.length) {
+          reset();
+        }
+        break;
+    }
+  };
+
+  React.useEffect(() => {
+    update(
+      recent().then((response: AxiosResponse<RecentResponse>): CardProps[] => {
+        return response.data.data.map((recent) => ({
+          front: recent.text,
+          back: recent.translation,
+        }));
+      }),
+    );
+  }, []);
+
+  React.useEffect(() => {
+    document.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [handleKeyUp]);
 
   if (isIdle || isLoading) {
     return <Loading />;
@@ -158,7 +185,7 @@ function FlashCard() {
           align="center"
           className="border border-dashed border-(--gray-4) bg-(--gray-1)"
         >
-          <span className='text-2xl text-(--gray-7)'>No more cards</span>
+          <span className="text-2xl text-(--gray-7)">No more cards</span>
         </Flex>
       </Flex>
       <Box mx="auto" width="fit-content">
