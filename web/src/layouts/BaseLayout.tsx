@@ -1,20 +1,36 @@
-import { Button, DropdownMenu, Flex, Text } from '@radix-ui/themes';
-import { Outlet } from 'react-router';
+import { Button, DropdownMenu, Flex, Heading, Separator, TabNav, Text } from '@radix-ui/themes';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../contexts/auth';
 import { CaretDownIcon, ExitIcon } from '@radix-ui/react-icons';
 
 function BaseLayout() {
   const { user, logout } = useAuth();
+  const { pathname } = useLocation();
 
   return (
-    <>
-      <Flex height="52px" justify="end" asChild>
-        <nav className="border-b border-gray-200">
+    <Flex direction="column" minHeight="100vh">
+      <Flex height="40px" px="4" align="center" justify="between" asChild>
+        <nav>
+          <Link to="/">
+            <Heading className="select-none" color="indigo" highContrast>
+              Flash Card
+            </Heading>
+          </Link>
+
+          <TabNav.Root size="2">
+            <TabNav.Link asChild active={pathname === "/" || pathname === "/recent"}>
+              <NavLink to="/">Translate</NavLink>
+            </TabNav.Link>
+            <TabNav.Link asChild active={pathname === "/flash"}>
+              <NavLink to="/flash">Flash</NavLink>
+            </TabNav.Link>
+          </TabNav.Root>
+
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <Flex width="108px" mx="2" align="center" justify="center">
+              <Flex width="108px" justify="center">
                 <Button tabIndex={-1} size="4" highContrast variant="ghost">
-                  {user!.name}
+                  <Text size="2">{user!.name}</Text>
                   <CaretDownIcon />
                 </Button>
               </Flex>
@@ -30,8 +46,9 @@ function BaseLayout() {
           </DropdownMenu.Root>
         </nav>
       </Flex>
+      <Separator size="4" />
       <Outlet />
-    </>
+    </Flex>
   );
 }
 

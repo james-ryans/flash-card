@@ -48,7 +48,7 @@ function FlashCard() {
       if (trigger) {
         gone.add(index);
         flip = false;
-      } else if (mx === 0) {
+      } else {
         flip = !flip;
       }
     }
@@ -75,11 +75,7 @@ function FlashCard() {
   });
 
   if (isIdle || isLoading) {
-    return (
-      <Container height="calc(100vh - 52px)">
-        <Loading />
-      </Container>
-    );
+    return <Loading />;
   }
 
   return (

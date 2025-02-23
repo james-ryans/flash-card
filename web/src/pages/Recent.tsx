@@ -31,7 +31,7 @@ function Recent() {
   };
 
   return (
-    <Flex height="calc(100vh - 52px)">
+    <Flex flexGrow="1">
       <Box px="4" className="flex-3/4">
         <Container>
           <Flex direction="column" gap="6">
@@ -52,7 +52,9 @@ function Recent() {
           </Flex>
         </Container>
       </Box>
-      <Separator orientation="vertical" size="4" />
+      <Box height="auto">
+        <Separator orientation="vertical" size="4" />
+      </Box>
       <Flex direction="column" className="flex-1/4">
         <Flex p="4" justify="between" align="center">
           <Heading as="h2" weight="medium">

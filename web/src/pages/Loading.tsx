@@ -3,7 +3,7 @@ import { LoadingIcon } from '../assets/icons/LoadingIcon';
 
 function Loading() {
   return (
-    <Flex align="center" justify="center" className="h-screen">
+    <Flex align="center" justify="center" flexGrow="1">
       <LoadingIcon />
     </Flex>
   );
