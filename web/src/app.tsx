@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Translation from './pages/Translation';
 import { AuthProvider } from './providers/Auth';
 import Recent from './pages/Recent';
+import FlashCard from './pages/FlashCard';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route element={<BaseLayout />}>
               <Route index element={<Translation />} />
               <Route path="/recent" element={<Recent />} />
+              <Route path="/flash" element={<FlashCard />} />
             </Route>
           </Route>
         </Routes>
