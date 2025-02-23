@@ -75,7 +75,11 @@ function FlashCard() {
   });
 
   if (isIdle || isLoading) {
-    return <Loading />;
+    return (
+      <Container height="calc(100vh - 52px)">
+        <Loading />
+      </Container>
+    );
   }
 
   return (
