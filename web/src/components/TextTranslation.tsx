@@ -4,7 +4,7 @@ import { Form, VisuallyHidden } from 'radix-ui';
 import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { translate } from '../requests/translation';
-import { Status, useClient } from '../hooks/useClient';
+import { Status, useQuery } from '../hooks/useQuery';
 import { Language } from '../models/translation';
 import { useLocation } from 'react-router';
 
@@ -24,7 +24,7 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
   const initialTranslation = location.state?.translation ?? '';
 
   const [text, setText] = React.useState(initialText);
-  const { isIdle, isLoading, isSuccess, isError, data, error, update, reset } = useClient<string>({
+  const { isIdle, isLoading, isSuccess, isError, data, error, update, reset } = useQuery<string>({
     status: initialTranslation === '' ? Status.Idle : Status.Success,
     data: initialTranslation,
   });

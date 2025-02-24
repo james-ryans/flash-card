@@ -2,7 +2,7 @@ import { Box, Flex, Kbd, Table, Text } from '@radix-ui/themes';
 import { useSprings, animated, to as interpolate, SpringValue, SpringRef } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import React from 'react';
-import { useClient } from '../hooks/useClient';
+import { useQuery } from '../hooks/useQuery';
 import { recent, RecentResponse } from '../requests/recent';
 import { AxiosResponse } from 'axios';
 import Loading from './Loading';
@@ -78,7 +78,7 @@ const swipe = (api: SpringRef<CardSpringProps>, id: number, dir: number) => {
 };
 
 function FlashCard() {
-  const { isIdle, isLoading, data, update } = useClient<CardProps[]>();
+  const { isIdle, isLoading, data, update } = useQuery<CardProps[]>();
   const cards = data ?? [];
   const gone = React.useRef(0);
 
