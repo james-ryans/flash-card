@@ -5,6 +5,7 @@ import { User } from '../models/user';
 import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
 import { AuthContext } from '../contexts/auth';
 import Loading from '../pages/Loading';
+import { Flex } from '@radix-ui/themes';
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -83,7 +84,11 @@ function AuthProvider({ children }: AuthProviderProps) {
   );
 
   if (status === Status.Idle || status === Status.Loading) {
-    return <Loading />;
+    return (
+      <Flex minHeight="100vh">
+        <Loading />
+      </Flex>
+    );
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
