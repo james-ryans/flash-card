@@ -183,7 +183,7 @@ function FlashCard() {
           width="400px"
           justify="center"
           align="center"
-          className="border border-dashed border-(--gray-4) bg-(--gray-1)"
+          className="border border-dashed border-(--gray-4) bg-(--gray-1) select-none"
         >
           <span className="text-2xl text-(--gray-7)">No more cards</span>
         </Flex>
