@@ -1,5 +1,6 @@
 import { BadRequestException, ExecutionContext, HttpException, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { isObservable, lastValueFrom } from 'rxjs';
 import { PlainUser } from 'src/user/user.model';
 
 @Injectable()
@@ -9,9 +10,12 @@ export class LocalAuthGuard extends AuthGuard('local') {
     }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const result: boolean = await super.canActivate(context);
+        const result = await super.canActivate(context);
         await super.logIn(super.getRequest(context));
+
+        if (isObservable(result)) {
+            return lastValueFrom(result);
+        }
         return result;
     }
 
