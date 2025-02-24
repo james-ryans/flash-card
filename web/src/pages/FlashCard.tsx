@@ -121,11 +121,11 @@ function FlashCard() {
   const handleKeyUp = (event: KeyboardEvent) => {
     switch (event.code) {
       case 'Space':
-        flip(api, 4 - gone.current, props[4 - gone.current]);
+        flip(api, cards.length - 1 - gone.current, props[cards.length - 1 - gone.current]);
         break;
       case 'ArrowLeft':
       case 'ArrowRight':
-        swipe(api, 4 - gone.current, event.code === 'ArrowLeft' ? -1 : 1);
+        swipe(api, cards.length - 1 - gone.current, event.code === 'ArrowLeft' ? -1 : 1);
         gone.current++;
         if (gone.current === cards.length) {
           reset();
