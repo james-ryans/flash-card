@@ -41,7 +41,11 @@ const config: { [key: string]: Knex.Config } = {
         },
         migrations: {
             tableName: 'knex_migrations',
+            loadExtensions: ['.js'],
         },
+        seeds: {
+            loadExtensions: ['.js'],
+        }
     },
 };
 
