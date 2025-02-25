@@ -13,7 +13,7 @@ export class KnexService implements IKnexService {
     private readonly logger: Logger;
     private _knexConnection: Knex;
     constructor(@Inject(KNEX_OPTIONS) private _knexOptions: KnexOptions) {
-        this.logger = new Logger('KnexService');
+        this.logger = new Logger(KnexService.name);
         this.logger.log(`Options: ${JSON.stringify(this._knexOptions)}`);
     }
 
