@@ -16,7 +16,7 @@ export class KnexService implements IKnexService {
     constructor(@Inject(KNEX_OPTIONS) private _knexOptions: KnexOptions) {
         this.logger = new Logger(KnexService.name);
 
-        const redact = fastRedact({ paths: ['connection.password'] });
+        const redact = fastRedact({ paths: ['connection.password'], censor: '[Redacted]' });
         this.logger.log(`Options: ${redact(this._knexOptions)}`);
     }
 
