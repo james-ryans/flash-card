@@ -1,8 +1,7 @@
-import { Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local.guard';
 import { Request } from 'express';
 import { AuthUser, LoginResponse, VerifyResponse } from './auth.model';
-import { User } from 'src/user/user.model';
 import { Public } from 'src/guards/session.guard';
 
 @Public()
