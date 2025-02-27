@@ -43,7 +43,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ${{ runner.temp }}/flashcard-server.tar
-          target: /home/flashcard/flashcard-server.tar
+          target: /home/flashcard/
           rm: true
 
       - name: Deploy compose to server
@@ -54,7 +54,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
-          target: /usr/src/flash-card
+          target: /usr/src/flash-card/
           rm: true
 
       - name: Load and re-create containers on server
