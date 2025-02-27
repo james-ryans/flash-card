@@ -11,9 +11,9 @@ services:
     image: "postgres:17.4"
     container_name: "postgres"
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "flashcard"
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=flashcard
     ports:
       - "5432:5432"
     volumes:

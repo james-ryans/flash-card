@@ -3,6 +3,7 @@ services:
     ports: !override []
 
   postgres:
+    environment: !override []
     env_file: '.env.docker.prod'
     ports: !override []
     healthcheck:
