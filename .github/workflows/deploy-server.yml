@@ -7,6 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+    
       - name: Build
         uses: docker/build-push-action@v6
         with:
@@ -30,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flashcard-server-image
-          path: ${{ runner.temp }}
+          path: ${{ github.workspace }}/image/flashcard-server.tar
 
       - name: Deploy image to server
         uses: appleboy/scp-action@v0.1.7
@@ -39,9 +42,10 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: ${{ runner.temp }}/flashcard-server.tar
-          target: /home/flashcard/flashcard-server.tar
-          rm: true
+          source: "${{ github.workspace }}/image/flashcard-server.tar"
+          target: /home/flashcard/
+          strip_components: 6
+          overwrite: true
 
       - name: Deploy compose to server
         uses: appleboy/scp-action@v0.1.7
@@ -50,12 +54,13 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
-          target: /usr/src/flash-card
-          rm: true
+          source: "server/docker-compose.yml,server/docker-compose.prod.yml"
+          target: /usr/src/flash-card/
+          strip_components: 1
+          overwrite: true
 
       - name: Load and re-create containers on server
-        uses: appleboy/ssh-action@v2
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
@@ -63,4 +68,4 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           script: |
             docker load --input /home/flashcard/flashcard-server.tar
-            docker compose --file=/usr/src/docker-compose.yml --file=/home/flashcard/docker-compose.prod.yml up --detach --force-recreate
+            docker compose --file=/usr/src/flash-card/docker-compose.yml --file=/usr/src/flash-card/docker-compose.prod.yml up --detach --force-recreate
