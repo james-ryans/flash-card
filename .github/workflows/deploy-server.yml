@@ -33,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flashcard-server-image
-          path: ${{ runner.temp }}/flashcard-server.tar
+          path: ${{ runner.temp }}
 
       - name: Display structure
         run: ls -laR ${{ runner.temp }}
