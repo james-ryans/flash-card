@@ -58,7 +58,7 @@ jobs:
           rm: true
 
       - name: Load and re-create containers on server
-        uses: appleboy/ssh-action@v2
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
