@@ -35,9 +35,6 @@ jobs:
           name: flashcard-server-image
           path: ${{ github.workspace }}/image/flashcard-server.tar
 
-      - name: Display structure
-        run: ls -laR ${{ runner.temp }}
-
       - name: Deploy image to server
         uses: appleboy/scp-action@v0.1.7
         with:
