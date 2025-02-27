@@ -38,17 +38,6 @@ jobs:
       - name: Display structure
         run: ls -laR ${{ runner.temp }}
 
-      - name: Deploy image to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SERVER_PORT }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: ${{ runner.temp }}/flashcard-server.tar
-          target: /home/flashcard/
-          overwrite: true
-
       - name: Deploy compose to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -58,6 +47,17 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
           target: /usr/src/flash-card/
+          overwrite: true
+
+      - name: Deploy image to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          source: ${{ runner.temp }}/flashcard-server.tar
+          target: /home/flashcard/
           overwrite: true
 
       - name: Load and re-create containers on server
