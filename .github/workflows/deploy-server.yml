@@ -33,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flashcard-server-image
-          path: ${{ runner.temp }}
+          path: ${{ runner.temp }}/flashcard-server.tar
 
       - name: Deploy image to server
         uses: appleboy/scp-action@v0.1.7
