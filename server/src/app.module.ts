@@ -7,9 +7,18 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { KnexModule } from './knex/knex.module';
 import { RecentModule } from './recent/recent.module';
+import { LoggerModule } from 'nestjs-pino';
+import pino from 'pino';
 
 @Module({
     imports: [
+        LoggerModule.forRoot({
+            pinoHttp: {
+                logger: pino({
+                    redact: ['req.headers.authorization', 'req.headers.cookie'],
+                }),
+            },
+        }),
         ConfigModule.forRoot(),
         KnexModule.register({
             client: process.env.DB_CLIENT,

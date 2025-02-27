@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable, CanActivate, SetMetadata } from '@nestjs/common';
+import { ExecutionContext, Injectable, CanActivate, SetMetadata, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -18,6 +18,10 @@ export class SessionAuthGuard implements CanActivate {
             return true;
         }
 
-        return context.switchToHttp().getRequest<Request>().isAuthenticated();
+        if (!context.switchToHttp().getRequest<Request>().isAuthenticated()) {
+            throw new UnauthorizedException();
+        }
+
+        return true;
     }
 }

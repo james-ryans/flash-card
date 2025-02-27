@@ -19,7 +19,7 @@ type Action<T> =
   | { type: Status.Success; data: T }
   | { type: Status.Error; error: string };
 
-interface Client<T> extends State<T> {
+interface Query<T> extends State<T> {
   update: (promise: Promise<T>) => Promise<T>;
   reset: () => void;
   isIdle: boolean;
@@ -32,7 +32,7 @@ const defaultInitialState: State = {
   status: Status.Idle,
 };
 
-function useClient<T = any>(initialState?: State<T>): Client<T> {
+function useQuery<T = any>(initialState?: State<T>): Query<T> {
   const [state, dispatch] = React.useReducer((state: State<T>, action: Action<T>) => {
     switch (action.type) {
       case Status.Idle:
@@ -77,4 +77,4 @@ function useClient<T = any>(initialState?: State<T>): Client<T> {
   };
 }
 
-export { useClient, Status };
+export { useQuery, Status };

@@ -8,8 +8,8 @@ import { connectionFactory } from './knex-connection.provider';
 
 @Global()
 @Module({
-    providers: [KnexService, connectionFactory],
     exports: [KnexService, connectionFactory],
+    providers: [KnexService, connectionFactory],
 })
 export class KnexModule {
     /**
