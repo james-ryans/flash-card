@@ -44,7 +44,7 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ${{ runner.temp }}/flashcard-server.tar
           target: /home/flashcard/
-          rm: true
+          overwrite: true
 
       - name: Deploy compose to server
         uses: appleboy/scp-action@v0.1.7
@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
           target: /usr/src/flash-card/
-          rm: true
+          overwrite: true
 
       - name: Load and re-create containers on server
         uses: appleboy/ssh-action@v1.2.0
