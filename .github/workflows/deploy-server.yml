@@ -47,6 +47,7 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
           target: /usr/src/flash-card/
+          strip_components: 1
           overwrite: true
 
       - name: Deploy image to server
@@ -58,6 +59,7 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: ${{ runner.temp }}/flashcard-server.tar
           target: /home/flashcard/
+          strip_components: 4
           overwrite: true
 
       - name: Load and re-create containers on server
