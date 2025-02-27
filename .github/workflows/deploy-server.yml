@@ -45,7 +45,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
+          source: "server/docker-compose.yml,server/docker-compose.prod.yml"
           target: /usr/src/flash-card/
           strip_components: 1
           overwrite: true
@@ -57,7 +57,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: ${{ runner.temp }}/flashcard-server.tar
+          source: "${{ runner.temp }}/flashcard-server.tar"
           target: /home/flashcard/
           strip_components: 4
           overwrite: true
