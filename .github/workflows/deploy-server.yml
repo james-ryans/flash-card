@@ -1,0 +1,66 @@
+name: Deploy Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          tags: flashcard-server:latest
+          context: "{{defaultContext}}:server"
+          outputs: type=docker,dest=${{ runner.temp }}/flashcard-server.tar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flashcard-server-image
+          path: ${{ runner.temp }}/flashcard-server.tar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flashcard-server-image
+          path: ${{ runner.temp }}
+
+      - name: Deploy image to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          source: ${{ runner.temp }}/flashcard-server.tar
+          target: /home/flashcard/flashcard-server.tar
+          rm: true
+
+      - name: Deploy compose to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          source: ./server/docker-compose.yml,./server/docker-compose.prod.yml
+          target: /usr/src/flash-card
+          rm: true
+
+      - name: Load and re-create containers on server
+        uses: appleboy/ssh-action@v2
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          script: |
+            docker load --input /home/flashcard/flashcard-server.tar
+            docker compose --file=/usr/src/docker-compose.yml --file=/home/flashcard/docker-compose.prod.yml up --detach --force-recreate
