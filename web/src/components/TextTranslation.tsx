@@ -43,13 +43,15 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (text !== '') {
-      update(translate({ text, from: Language.EN, to: Language.ID })).then(() => {
-        onSubmitSuccess?.();
-      });
-
-      inputRef.current?.select();
+    if (isLoading || text === '') {
+      return;
     }
+
+    update(translate({ text, from: Language.EN, to: Language.ID })).then(() => {
+      onSubmitSuccess?.();
+    });
+
+    inputRef.current?.select();
   };
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,19 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
+import { RecentResponse } from '../models/recent';
+import { get } from './common';
 
-type Recent = {
-  text: string;
-  translation: string;
-};
-
-interface RecentResponse {
-  data: Recent[];
-}
-
-async function recent(): Promise<AxiosResponse<RecentResponse>> {
-  return await axios.get(import.meta.env.VITE_SERVER_BASE_URL + '/recent', {
-    withCredentials: true,
-  });
+async function recent(): Promise<RecentResponse> {
+  return get('/recent');
 }
 
 export { recent };
-export type { Recent, RecentResponse };

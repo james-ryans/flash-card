@@ -1,5 +1,4 @@
 import React from 'react';
-import { AxiosResponse } from 'axios';
 import * as auth from '../requests/auth';
 import { User } from '../models/user';
 import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
@@ -33,11 +32,11 @@ function AuthProvider({ children }: AuthProviderProps) {
     setData({ user, status: Status.Loading });
     auth
       .verify()
-      .then((response: AxiosResponse<VerifyResponse>) => {
-        if (response.data.statusCode !== 200) {
-          throw new Error(response.data.message);
+      .then((response: VerifyResponse) => {
+        if (response.statusCode !== 200) {
+          throw new Error(response.message);
         }
-        setData({ user: response.data.data, status: Status.Success });
+        setData({ user: response.data, status: Status.Success });
         return response;
       })
       .catch(() => {
@@ -47,12 +46,11 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const login = React.useCallback(
     (request: LoginRequest) => {
-      setData({ user, status: Status.Loading });
       return auth
         .login(request)
-        .then((response: AxiosResponse<LoginResponse>) => {
-          setData({ user: response.data.data, status: Status.Success });
-          return response;
+        .then((response: LoginResponse) => {
+          setData({ user: response.data, status: Status.Success });
+          return response.data;
         })
         .catch((error) => {
           setData({ user: null, status: Status.Error });
@@ -63,7 +61,6 @@ function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const logout = React.useCallback(() => {
-    setData({ user, status: Status.Loading });
     return auth
       .logout()
       .then(() => {

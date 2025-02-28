@@ -1,15 +1,14 @@
 import React from 'react';
 import { User } from '../models/user';
-import { LoginRequest, LoginResponse } from '../models/auth';
-import { AxiosResponse } from 'axios';
+import { LoginRequest } from '../models/auth';
 
 const AuthContext = React.createContext<{
   user: User | null;
-  login: (request: LoginRequest) => Promise<AxiosResponse<LoginResponse>>;
+  login: (request: LoginRequest) => Promise<User>;
   logout: () => Promise<void>;
 }>({
   user: null,
-  login: () => Promise.resolve({} as AxiosResponse<LoginResponse>),
+  login: () => Promise.resolve({} as User),
   logout: () => Promise.resolve(),
 });
 AuthContext.displayName = 'AuthContext';
