@@ -47,12 +47,11 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const login = React.useCallback(
     (request: LoginRequest) => {
-      setData({ user, status: Status.Loading });
       return auth
         .login(request)
-        .then((response: AxiosResponse<LoginResponse>) => {
-          setData({ user: response.data.data, status: Status.Success });
-          return response;
+        .then((response: LoginResponse) => {
+          setData({ user: response.data, status: Status.Success });
+          return response.data;
         })
         .catch((error) => {
           setData({ user: null, status: Status.Error });
@@ -63,7 +62,6 @@ function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const logout = React.useCallback(() => {
-    setData({ user, status: Status.Loading });
     return auth
       .logout()
       .then(() => {

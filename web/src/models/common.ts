@@ -1,9 +1,15 @@
-type Response = {
+interface Request {}
+
+interface Response {
   message: string;
   statusCode: number;
-};
+}
 
-type ErrorResponse = Response & {
+interface SuccessResponse<T = any> extends Response {
+  data: T;
+}
+
+interface ErrorResponse extends Response {
   error: string;
 };
 
@@ -13,5 +19,5 @@ const DEFAULT_ERROR_RESPONSE: ErrorResponse = {
   error: 'INTERNAL_SERVER_ERROR',
 };
 
-export type { ErrorResponse, Response };
+export type { SuccessResponse, ErrorResponse, Response, Request };
 export { DEFAULT_ERROR_RESPONSE };

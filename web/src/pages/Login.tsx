@@ -1,35 +1,34 @@
 import { Box, Button, Callout, Card, Container, Flex, Heading, Text, TextField } from '@radix-ui/themes';
 import { Form } from 'radix-ui';
 import React from 'react';
-import { AxiosError } from 'axios';
-import { DEFAULT_ERROR_RESPONSE, ErrorResponse } from '../models/common';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useAuth } from '../contexts/auth';
 import { LoginRequest } from '../models/auth';
 import { useNavigate } from 'react-router';
+import { useQuery } from '../hooks/useQuery';
 
 function Login() {
-  const [data, setData] = React.useState<LoginRequest>({
+  const navigate = useNavigate();
+  const auth = useAuth();
+
+  const { isLoading, isSuccess, isError, error, update } = useQuery<void>();
+  const [login, setLogin] = React.useState<LoginRequest>({
     email: '',
     password: '',
   });
-  const [error, setError] = React.useState<ErrorResponse | null>(null);
 
-  const navigate = useNavigate();
-  const auth = useAuth();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    auth
-      .login(data)
-      .then(() => {
-        setError(null);
-        navigate('/');
-      })
-      .catch((error: AxiosError<ErrorResponse>) => {
-        setError(error.response?.data || DEFAULT_ERROR_RESPONSE);
-      });
+    if (isLoading || isSuccess) {
+      return;
+    }
+    update(auth.login(login).then());
   };
+
+  React.useEffect(() => {
+    navigate('/');
+  }, [auth.user]);
 
   return (
     <Container className="h-screen bg-[#e4e4e4]">
@@ -40,12 +39,12 @@ function Login() {
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
             <Flex align="center" gap="4" direction="column">
-              {error && (
+              {isError && (
                 <Callout.Root color="red" className="w-full">
                   <Callout.Icon>
                     <InfoCircledIcon />
                   </Callout.Icon>
-                  <Callout.Text>{error.message}</Callout.Text>
+                  <Callout.Text>{error}</Callout.Text>
                 </Callout.Root>
               )}
               <Heading size="6">Sign In</Heading>
@@ -65,8 +64,8 @@ function Login() {
                             color={validity?.valueMissing || validity?.typeMismatch ? 'red' : undefined}
                             placeholder="Email"
                             type="email"
-                            value={data.email}
-                            onChange={(event) => setData({ ...data, email: event.target.value })}
+                            value={login.email}
+                            onChange={(event) => setLogin({ ...login, email: event.target.value })}
                             required
                           />
                         </Form.Control>
@@ -97,8 +96,8 @@ function Login() {
                             color={validity?.valueMissing ? 'red' : undefined}
                             placeholder="Password"
                             type="password"
-                            value={data.password}
-                            onChange={(event) => setData({ ...data, password: event.target.value })}
+                            value={login.password}
+                            onChange={(event) => setLogin({ ...login, password: event.target.value })}
                             required
                           />
                         </Form.Control>

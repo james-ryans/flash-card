@@ -1,15 +1,12 @@
-import { Response } from './common';
+import { SuccessResponse, Request } from './common';
 import { User } from './user';
 
-type LoginRequest = {
+interface LoginRequest extends Request {
   email: string;
   password: string;
 };
 
-type LoginResponse = Response & {
-  data: User;
-};
-
-type VerifyResponse = LoginResponse;
+interface LoginResponse extends SuccessResponse<User> {};
+interface VerifyResponse extends LoginResponse {};
 
 export type { LoginRequest, LoginResponse, VerifyResponse };
