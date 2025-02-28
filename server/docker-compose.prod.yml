@@ -17,7 +17,8 @@ services:
     container_name: server
     restart: always
     volumes:
-      - './secrets:/app'
+      - './secrets/.env:/app/.env'
+      - './secrets/jamesryans-experiment-486190bd56d8.json:/app/jamesryans-experiment-486190bd56d8.json'
     ports:
       - 3000:3000
     depends_on:
