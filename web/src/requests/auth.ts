@@ -8,14 +8,8 @@ function login(request: LoginRequest): Promise<LoginResponse> {
   });
 }
 
-function logout(): Promise<AxiosResponse<void>> {
-  return axios.post(
-    import.meta.env.VITE_SERVER_BASE_URL + '/auth/logout',
-    {},
-    {
-      withCredentials: true,
-    },
-  );
+function logout(): Promise<void> {
+  return post('/auth/logout', {}).then();
 }
 
 function verify(): Promise<AxiosResponse<VerifyResponse>> {
