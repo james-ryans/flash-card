@@ -16,9 +16,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache-dependency-path: "web/package-lock.json"
           cache: "npm"
 
       - name: npm install and build
+        env:
+          VITE_SERVER_BASE_URL: ${{ vars.VITE_SERVER_BASE_URL }}
         run: |
           cd web
           npm install
@@ -28,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vite-dist
-          path: ./dist
+          path: ./web/dist
 
   deploy:
     runs-on: ubuntu-latest
