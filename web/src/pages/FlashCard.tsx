@@ -3,8 +3,8 @@ import { useSprings, animated, to as interpolate, SpringValue, SpringRef } from 
 import { useDrag } from '@use-gesture/react';
 import React from 'react';
 import { useQuery } from '../hooks/useQuery';
-import { recent, RecentResponse } from '../requests/recent';
-import { AxiosResponse } from 'axios';
+import { recent } from '../requests/recent';
+import { RecentResponse } from '../models/recent';
 import Loading from './Loading';
 
 type CardSpringValue = {
@@ -136,8 +136,8 @@ function FlashCard() {
 
   React.useEffect(() => {
     update(
-      recent().then((response: AxiosResponse<RecentResponse>): CardProps[] => {
-        return response.data.data.map((recent) => ({
+      recent().then((response: RecentResponse): CardProps[] => {
+        return response.data.map((recent) => ({
           front: recent.text,
           back: recent.translation,
         }));
