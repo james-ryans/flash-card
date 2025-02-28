@@ -16,7 +16,8 @@ services:
     image: 'flashcard-server:latest'
     container_name: server
     restart: always
-    env_file: '.env'
+    volumes:
+      - './secrets:/app'
     ports:
       - 3000:3000
     depends_on:
