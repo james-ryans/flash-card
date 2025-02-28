@@ -27,7 +27,9 @@ function Login() {
   };
 
   React.useEffect(() => {
-    navigate('/');
+    if (auth.user) {
+      navigate('/');
+    }
   }, [auth.user]);
 
   return (
