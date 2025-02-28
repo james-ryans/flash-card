@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/auth';
 import { LoginRequest } from '../models/auth';
 import { useNavigate } from 'react-router';
 import { useQuery } from '../hooks/useQuery';
+import { LoadingIcon } from '../assets/icons/LoadingIcon';
 
 function Login() {
   const navigate = useNavigate();
@@ -112,8 +113,9 @@ function Login() {
                     </Form.Message>
                   </Form.Field>
                   <Box mt="4" asChild>
-                    <Button size="3" type="submit">
+                    <Button size="3" type="submit" disabled={isLoading}>
                       Sign In
+                      {isLoading && <LoadingIcon />}
                     </Button>
                   </Box>
                 </Form.Root>

@@ -7,9 +7,9 @@ import { Theme } from '@radix-ui/themes';
 import App from './app';
 
 createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
+  <StrictMode>
     <Theme>
       <App />
     </Theme>
-  // </StrictMode>,
+  </StrictMode>,
 );
