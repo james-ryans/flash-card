@@ -20,10 +20,11 @@ jobs:
           cache: "npm"
 
       - name: npm install and build
+        env:
+          VITE_SERVER_BASE_URL: ${{ vars.VITE_SERVER_BASE_URL }}
         run: |
           cd web
           npm install
-          export VITE_SERVER_BASE_URL=${{ env.VITE_SERVER_BASE_URL }}
           npm run build
 
       - name: Upload artifact for deployment job
