@@ -4,7 +4,7 @@ services:
 
   postgres:
     environment: !override []
-    env_file: '.env.docker.prod'
+    env_file: './secrets/.env.docker.prod'
     ports: !override []
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']
@@ -16,7 +16,9 @@ services:
     image: 'flashcard-server:latest'
     container_name: server
     restart: always
-    env_file: '.env'
+    volumes:
+      - './secrets/.env:/app/.env'
+      - './secrets/jamesryans-experiment-486190bd56d8.json:/app/jamesryans-experiment-486190bd56d8.json'
     ports:
       - 3000:3000
     depends_on:
