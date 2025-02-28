@@ -4,7 +4,7 @@ services:
 
   postgres:
     environment: !override []
-    env_file: '.env.docker.prod'
+    env_file: './secrets/.env.docker.prod'
     ports: !override []
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']

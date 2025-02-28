@@ -33,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flashcard-server-image
-          path: ${{ github.workspace }}/image/flashcard-server.tar
+          path: ${{ github.workspace }}/image
 
       - name: Deploy image to server
         uses: appleboy/scp-action@v0.1.7
