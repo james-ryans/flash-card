@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import type { Knex } from 'knex';
 import { KNEX } from 'src/knex/constants';
-import { PlainUser } from 'src/user/user.model';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthSerializer extends PassportSerializer {
@@ -10,16 +10,16 @@ export class AuthSerializer extends PassportSerializer {
         super();
     }
 
-    serializeUser(user: PlainUser, done: (err: Error | null, user: string) => void): void {
+    serializeUser(user: User, done: (err: Error | null, user: string) => void): void {
         done(null, user.id);
     }
 
-    deserializeUser(payload: string, done: (err: Error | null, user: PlainUser | null) => void): void {
+    deserializeUser(payload: string, done: (err: Error | null, user: User | null) => void): void {
         this.knex
             .table('users')
             .where('id', payload)
-            .first()
-            .then((user: PlainUser) => {
+            .first<User>()
+            .then((user: User) => {
                 done(null, user);
             })
             .catch((err: Error) => {

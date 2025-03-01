@@ -8,14 +8,14 @@ export class AuthUser {
     }
 }
 
-export type LoginResponse = {
+export interface LoginResponse {
     data?: AuthUser;
     message: string;
     statusCode: number;
-};
+}
 
-export type VerifyResponse = {
+export interface VerifyResponse {
     data?: AuthUser;
     message: string;
     statusCode: number;
-};
+}

@@ -1,17 +1,27 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { PlainUser } from 'src/user/user.model';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { LocalIdentityService } from 'src/local_identity/local_identity.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private localIdentityService: LocalIdentityService,
+    ) {}
 
-    async validateUser(email: string, password: string): Promise<PlainUser | null> {
+    async validateLocalUser(email: string, password: string): Promise<User | null> {
         const user = await this.userService.findOne(email);
-        if (user && bcrypt.compareSync(password, user.password)) {
-            return this.userService.getPlainUser(user);
+        if (!user) {
+            return null;
         }
-        return null;
+
+        const identity = await this.localIdentityService.findOne(user.id);
+        if (!identity || !bcrypt.compareSync(password, identity.password)) {
+            return null;
+        }
+
+        return user;
     }
 }

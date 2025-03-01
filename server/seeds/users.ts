@@ -3,18 +3,31 @@ import * as bcrypt from 'bcrypt';
 
 export async function seed(knex: Knex): Promise<void> {
     // Deletes ALL existing entries
-    await knex('users').del();
+    await knex.table('local_identities').delete();
+    await knex.table('users').delete();
 
     // Inserts seed entries
-    await knex('users').insert([
+    const users = await knex.table('users').insert(
+        [
+            {
+                name: 'Admin',
+                email: 'admin@example.com',
+            },
+            {
+                name: 'User',
+                email: 'user@example.com',
+            },
+        ],
+        ['id'],
+    );
+
+    await knex.table('local_identities').insert([
         {
-            name: 'Admin',
-            email: 'admin@example.com',
+            user_id: users[0].id,
             password: bcrypt.hashSync('admin', bcrypt.genSaltSync(10)),
         },
         {
-            name: 'User',
-            email: 'user@example.com',
+            user_id: users[1].id,
             password: bcrypt.hashSync('user', bcrypt.genSaltSync(10)),
         },
     ]);
