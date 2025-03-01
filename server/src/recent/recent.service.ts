@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { KNEX } from 'src/knex/constants';
 import { User } from 'src/user/entities/user.entity';
-import { RecentResponse } from './entities/recent.entity';
+import { Recent, RecentResponse } from './entities/recent.entity';
 
 @Injectable()
 export class RecentService {

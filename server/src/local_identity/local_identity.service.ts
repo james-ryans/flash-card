@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import knex, { Knex } from 'knex';
-import { identity } from 'rxjs';
+import { Knex } from 'knex';
 import { KNEX } from 'src/knex/constants';
 
 @Injectable()
