@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { AuthenticateOptionsGoogle, Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { FederatedIdentityService } from 'src/federated_identity/federated_identity.service';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
@@ -16,6 +16,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             callbackURL: process.env.BASE_URL! + '/auth/google/callback',
             scope: ['email', 'profile'],
+        });
+    }
+
+    authorizationParams(options: AuthenticateOptionsGoogle): AuthenticateOptionsGoogle {
+        return Object.assign(options, {
+            prompt: 'select_account',
         });
     }
 
