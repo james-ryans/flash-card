@@ -1,7 +1,7 @@
 import React from 'react';
 import * as auth from '../requests/auth';
 import { User } from '../models/user';
-import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, VerifyResponse } from '../models/auth';
 import { AuthContext } from '../contexts/auth';
 import Loading from '../pages/Loading';
 import { Flex } from '@radix-ui/themes';
@@ -84,14 +84,31 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
   }, [setData]);
 
+  const register = React.useCallback(
+    (request: RegisterRequest) => {
+      return auth
+        .register(request)
+        .then((response: RegisterResponse) => {
+          setData({ user: response.data, status: Status.Success });
+          return response.data;
+        })
+        .catch((error) => {
+          setData({ user: null, status: Status.Error });
+          throw error;
+        });
+    },
+    [setData],
+  );
+
   const value = React.useMemo(
     () => ({
       user,
       login,
       logout,
+      register,
       googleSignIn,
     }),
-    [user, login, logout, googleSignIn],
+    [user, login, logout, register, googleSignIn],
   );
 
   if (status === Status.Idle || status === Status.Loading) {

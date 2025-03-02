@@ -9,4 +9,12 @@ interface LoginRequest extends Request {
 interface LoginResponse extends SuccessResponse<User> {};
 interface VerifyResponse extends LoginResponse {};
 
-export type { LoginRequest, LoginResponse, VerifyResponse };
+interface RegisterRequest extends Request {
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+interface RegisterResponse extends SuccessResponse<User> {};
+
+export type { LoginRequest, LoginResponse, VerifyResponse, RegisterRequest, RegisterResponse };

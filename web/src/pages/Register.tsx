@@ -1,34 +1,23 @@
-import {
-  Box,
-  Button,
-  Callout,
-  Card,
-  Container,
-  Flex,
-  Heading,
-  Link,
-  Separator,
-  Text,
-  TextField,
-} from '@radix-ui/themes';
+import { Box, Button, Callout, Card, Container, Flex, Heading, Link, Separator, Text, TextField } from '@radix-ui/themes';
 import { Form } from 'radix-ui';
 import React from 'react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useAuth } from '../contexts/auth';
-import { LoginRequest } from '../models/auth';
+import { RegisterRequest } from '../models/auth';
 import { useNavigate } from 'react-router';
 import { useQuery } from '../hooks/useQuery';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { GoogleIcon } from '../assets/icons/GoogleIcon';
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
   const auth = useAuth();
 
   const { isLoading, isSuccess, isError, error, update } = useQuery<void>();
-  const [login, setLogin] = React.useState<LoginRequest>({
+  const [register, setRegister] = React.useState<RegisterRequest>({
     email: '',
     password: '',
+    password_confirmation: '',
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +26,7 @@ function Login() {
     if (isLoading || isSuccess) {
       return;
     }
-    update(auth.login(login).then());
+    update(auth.register(register).then());
   };
 
   const handleGoogleSignIn = () => {
@@ -58,7 +47,7 @@ function Login() {
     <Container className="h-screen bg-[#e4e4e4]">
       <Flex align="center" direction="column" asChild>
         <Box className="mx-auto w-lg">
-          <Heading size="8" className="py-8" color='indigo' highContrast>
+          <Heading size="8" className="py-8" color="indigo" highContrast>
             Flash Card
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
@@ -71,7 +60,7 @@ function Login() {
                   <Callout.Text>{error}</Callout.Text>
                 </Callout.Root>
               )}
-              <Heading size="6">Sign In</Heading>
+              <Heading size="6">Register</Heading>
               <Flex direction="column" gap="4" width="100%" asChild>
                 <Form.Root onSubmit={handleSubmit}>
                   <Form.Field name="email">
@@ -88,8 +77,8 @@ function Login() {
                             color={validity?.valueMissing || validity?.typeMismatch ? 'red' : undefined}
                             placeholder="Email"
                             type="email"
-                            value={login.email}
-                            onChange={(event) => setLogin({ ...login, email: event.target.value })}
+                            value={register.email}
+                            onChange={(event) => setRegister({ ...register, email: event.target.value })}
                             required
                           />
                         </Form.Control>
@@ -120,8 +109,8 @@ function Login() {
                             color={validity?.valueMissing ? 'red' : undefined}
                             placeholder="Password"
                             type="password"
-                            value={login.password}
-                            onChange={(event) => setLogin({ ...login, password: event.target.value })}
+                            value={register.password}
+                            onChange={(event) => setRegister({ ...register, password: event.target.value })}
                             required
                           />
                         </Form.Control>
@@ -133,14 +122,51 @@ function Login() {
                       </Text>
                     </Form.Message>
                   </Form.Field>
+                  <Form.Field name="password_confirmation">
+                    <Form.Label asChild>
+                      <Text size="1" weight="medium" as="label">
+                        Confirm Password
+                      </Text>
+                    </Form.Label>
+                    <Form.ValidityState>
+                      {(validity: ValidityState | undefined) => (
+                        <Form.Control asChild>
+                          <TextField.Root
+                            size="3"
+                            color={validity?.valueMissing || validity?.customError ? 'red' : undefined}
+                            placeholder="Confirm password"
+                            type="password"
+                            value={register.password_confirmation}
+                            onChange={(event) =>
+                              setRegister({ ...register, password_confirmation: event.target.value })
+                            }
+                            required
+                          />
+                        </Form.Control>
+                      )}
+                    </Form.ValidityState>
+                    <Form.Message match="valueMissing" asChild>
+                      <Text size="1" as="label" color="red">
+                        Please enter your password again
+                      </Text>
+                    </Form.Message>
+                    <Form.Message match={(value) => value !== register.password} asChild>
+                      <Text size="1" as="label" color="red">
+                        Passwords do not match
+                      </Text>
+                    </Form.Message>
+                  </Form.Field>
                   <Box mt="4" asChild>
                     <Button size="3" type="submit" disabled={isLoading}>
-                      Sign In
+                      Register
                       {isLoading && <LoadingIcon />}
                     </Button>
                   </Box>
                 </Form.Root>
               </Flex>
+              <Text size="1" color="gray">
+                Already have an account? <Link href="/login">Login</Link>
+              </Text>
               <Flex width="100%" align="center" gap="2">
                 <Separator orientation="horizontal" size="4" />
                 <Text size="1" color="gray">
@@ -154,9 +180,6 @@ function Login() {
                   Google
                 </Button>
               </Box>
-              <Text size="1" color="gray">
-                Don't have an account? <Link href="/register">Register</Link>
-              </Text>
             </Flex>
           </Card>
         </Box>
@@ -165,4 +188,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
