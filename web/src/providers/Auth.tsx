@@ -71,13 +71,27 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
   }, [setData]);
 
+  const googleSignIn = React.useCallback(() => {
+    return auth
+      .googleSignIn()
+      .then((response: LoginResponse) => {
+        setData({ user: response.data, status: Status.Success });
+        return response.data;
+      })
+      .catch((error) => {
+        setData({ user: null, status: Status.Error });
+        throw error;
+      });
+  }, [setData]);
+
   const value = React.useMemo(
     () => ({
       user,
       login,
       logout,
+      googleSignIn,
     }),
-    [user, login, logout],
+    [user, login, logout, googleSignIn],
   );
 
   if (status === Status.Idle || status === Status.Loading) {

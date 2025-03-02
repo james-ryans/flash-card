@@ -1,4 +1,16 @@
-import { Box, Button, Callout, Card, Container, Flex, Heading, Text, TextField } from '@radix-ui/themes';
+import {
+  Box,
+  Button,
+  Callout,
+  Card,
+  Container,
+  Flex,
+  Heading,
+  Link,
+  Separator,
+  Text,
+  TextField,
+} from '@radix-ui/themes';
 import { Form } from 'radix-ui';
 import React from 'react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
@@ -7,6 +19,7 @@ import { LoginRequest } from '../models/auth';
 import { useNavigate } from 'react-router';
 import { useQuery } from '../hooks/useQuery';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
+import { GoogleIcon } from '../assets/icons/GoogleIcon';
 
 function Login() {
   const navigate = useNavigate();
@@ -25,6 +38,14 @@ function Login() {
       return;
     }
     update(auth.login(login).then());
+  };
+
+  const handleGoogleSignIn = () => {
+    if (isLoading || isSuccess) {
+      return;
+    }
+
+    window.location.href = import.meta.env.VITE_SERVER_BASE_URL + '/auth/google';
   };
 
   React.useEffect(() => {
@@ -120,6 +141,19 @@ function Login() {
                   </Box>
                 </Form.Root>
               </Flex>
+              <Flex width="100%" align="center" gap="2">
+                <Separator orientation="horizontal" size="4" />
+                <Text size="1" color="gray">
+                  or
+                </Text>
+                <Separator orientation="horizontal" size="4" />
+              </Flex>
+              <Box width="100%" asChild>
+                <Button size="3" variant="outline" color="gray" onClick={handleGoogleSignIn} disabled={isLoading}>
+                  <GoogleIcon />
+                  Google
+                </Button>
+              </Box>
             </Flex>
           </Card>
         </Box>

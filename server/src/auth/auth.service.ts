@@ -1,17 +1,41 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { PlainUser } from 'src/user/user.model';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { LocalIdentityService } from 'src/local_identity/local_identity.service';
+import { FederatedIdentityService } from 'src/federated_identity/federated_identity.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private localIdentityService: LocalIdentityService,
+        private federatedIdentityService: FederatedIdentityService,
+    ) {}
 
-    async validateUser(email: string, password: string): Promise<PlainUser | null> {
-        const user = await this.userService.findOne(email);
-        if (user && bcrypt.compareSync(password, user.password)) {
-            return this.userService.getPlainUser(user);
+    async validateLocalUser(email: string, password: string): Promise<User | null> {
+        const user = await this.userService.findOneByEmail(email);
+        if (!user) {
+            return null;
         }
-        return null;
+
+        const identity = await this.localIdentityService.findOne(user.id);
+        if (!identity || !bcrypt.compareSync(password, identity.password)) {
+            return null;
+        }
+
+        return user;
+    }
+
+    async validateGoogleUser(id: string, name: string, email: string): Promise<User | undefined> {
+        let user: User | undefined;
+        const identity = await this.federatedIdentityService.findOneFromGoogle(id);
+        if (!identity) {
+            user = await this.userService.createGoogle(id, name, email);
+        } else {
+            user = await this.userService.findOne(identity.user_id);
+        }
+
+        return user;
     }
 }

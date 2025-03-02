@@ -8,6 +8,8 @@ import { UserModule } from './user/user.module';
 import { KnexModule } from './knex/knex.module';
 import { RecentModule } from './recent/recent.module';
 import { LoggerModule } from 'nestjs-pino';
+import { LocalIdentityModule } from './local_identity/local_identity.module';
+import { FederatedIdentityModule } from './federated_identity/federated_identity.module';
 import pino from 'pino';
 
 @Module({
@@ -35,6 +37,8 @@ import pino from 'pino';
         AuthModule,
         TranslateModule,
         RecentModule,
+        LocalIdentityModule,
+        FederatedIdentityModule,
     ],
     providers: [
         {

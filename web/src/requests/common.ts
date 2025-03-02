@@ -21,8 +21,12 @@ function get<T = any>(api: string, headers: RawAxiosRequestHeaders = {}): Promis
   return req(axios.get(import.meta.env.VITE_SERVER_BASE_URL + api, { headers, withCredentials: true }));
 }
 
+function getWithoutCredentials<T = any>(api: string, headers: RawAxiosRequestHeaders = {}): Promise<SuccessResponse<T>> {
+  return req(axios.get(import.meta.env.VITE_SERVER_BASE_URL + api, { headers }));
+}
+
 function post<T = any>(api: string, request: Request, headers: RawAxiosRequestHeaders = {}): Promise<SuccessResponse<T>> {
   return req(axios.post(import.meta.env.VITE_SERVER_BASE_URL + api, request, { headers, withCredentials: true }));
 }
 
-export { get, post };
+export { get, getWithoutCredentials, post };

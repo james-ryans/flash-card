@@ -1,7 +1,7 @@
 import { BadRequestException, ExecutionContext, HttpException, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { isObservable, lastValueFrom } from 'rxjs';
-import { PlainUser } from 'src/user/user.model';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
@@ -19,13 +19,16 @@ export class LocalAuthGuard extends AuthGuard('local') {
         return result;
     }
 
-    handleRequest<TUser = PlainUser>(
-        err: Error,
+    handleRequest<TUser = User>(
+        error: Error,
         user: TUser | null,
         info: Record<'message', string> | null,
         context: ExecutionContext,
         status?: number,
     ): TUser {
+        if (error) {
+            throw error;
+        }
         if (!user) {
             if (info?.message && status) {
                 throw new HttpException(info.message, status);

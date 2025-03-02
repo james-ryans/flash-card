@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Language } from './entities/translate.entity';
 import { Knex } from 'knex';
 import { KNEX } from 'src/knex/constants';
-import { PlainUser } from 'src/user/user.model';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class TranslateService {
@@ -15,7 +15,7 @@ export class TranslateService {
         this.translate = new translateV2.Translate();
     }
 
-    async translation(user: PlainUser, text: string, from: Language, to: Language): Promise<string> {
+    async translation(user: User, text: string, from: Language, to: Language): Promise<string> {
         const [translation] = await this.translate.translate(text, {
             from: from.toString(),
             to: to.toString(),
