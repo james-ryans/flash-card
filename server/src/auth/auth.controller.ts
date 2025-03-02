@@ -1,6 +1,6 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthUser, LoginResponse, VerifyResponse } from './entities/auth.entity';
 import { Public } from 'src/guards/session.guard';
 import { GoogleOAuthGuard } from 'src/guards/google.guard';
@@ -26,14 +26,8 @@ export class AuthController {
 
     @UseGuards(GoogleOAuthGuard)
     @Get('google/callback')
-    googleAuthRedirect(@Req() req: Request): LoginResponse {
-        const user = new AuthUser(req.user!);
-
-        return {
-            data: user,
-            message: 'Login successful',
-            statusCode: HttpStatus.OK,
-        };
+    googleAuthRedirect(@Res() res: Response): void {
+        return res.redirect(process.env.CLIENT_BASE_URL!);
     }
 
     @Post('logout')

@@ -6,10 +6,12 @@ const AuthContext = React.createContext<{
   user: User | null;
   login: (request: LoginRequest) => Promise<User>;
   logout: () => Promise<void>;
+  googleSignIn: () => Promise<User>;
 }>({
   user: null,
   login: () => Promise.resolve({} as User),
   logout: () => Promise.resolve(),
+  googleSignIn: () => Promise.resolve({} as User),
 });
 AuthContext.displayName = 'AuthContext';
 
