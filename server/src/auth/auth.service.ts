@@ -12,7 +12,7 @@ export class AuthService {
     ) {}
 
     async validateLocalUser(email: string, password: string): Promise<User | null> {
-        const user = await this.userService.findOne(email);
+        const user = await this.userService.findOneByEmail(email);
         if (!user) {
             return null;
         }

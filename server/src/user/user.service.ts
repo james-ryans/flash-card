@@ -11,6 +11,10 @@ export class UserService {
         return await this.knex.table('users').where('id', id).first<User>();
     }
 
+    async findOneByEmail(email: string): Promise<User | undefined> {
+        return await this.knex.table('users').where('email', email).first<User>();
+    }
+
     async createGoogle(id: string, name: string, email: string): Promise<User> {
         return this.knex.transaction(async (trx) => {
             const user = await trx.table('users').insert({ name, email }).returning<User[]>('*');
