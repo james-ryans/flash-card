@@ -12,9 +12,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         private federatedIdentityService: FederatedIdentityService,
     ) {
         super({
-            clientID: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-            callbackURL: 'http://lvh.me:3000/auth/google/callback',
+            clientID: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            callbackURL: process.env.BASE_URL! + '/auth/google/callback',
             scope: ['email', 'profile'],
         });
     }
