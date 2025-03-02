@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthenticateOptionsGoogle, Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { FederatedIdentityService } from 'src/federated_identity/federated_identity.service';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-    constructor(
-        private userService: UserService,
-        private federatedIdentityService: FederatedIdentityService,
-    ) {
+    constructor(private authService: AuthService) {
         super({
             clientID: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -28,16 +23,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     async validate(_accessToken: string, _refreshToken: string, profile: Profile, done: VerifyCallback): Promise<void> {
         const { id, emails, displayName } = profile;
 
-        let user: User | undefined;
-        const identity = await this.federatedIdentityService.findOneFromGoogle(id);
-        if (!identity) {
-            user = await this.userService.createGoogle(id, displayName, emails![0].value);
-        } else {
-            user = await this.userService.findOne(identity.user_id);
-            if (!user) {
-                return done(null, false);
-            }
-        }
+        let user = await this.authService.validateGoogleUser(id, displayName, emails![0].value);
         return done(null, user);
     }
 }
