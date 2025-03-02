@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { LocalIdentityService } from 'src/local_identity/local_identity.service';
@@ -37,5 +37,14 @@ export class AuthService {
         }
 
         return user;
+    }
+
+    async registerLocalUser(name: string, email: string, password: string): Promise<User> {
+        const user = await this.userService.findOneByEmail(email);
+        if (user) {
+            throw new BadRequestException('This email already registered');
+        }
+
+        return await this.userService.createLocal(name, email, password);
     }
 }
