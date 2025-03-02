@@ -28,7 +28,7 @@ function BaseLayout() {
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <Flex width="108px" justify="center">
+              <Flex mx="4" justify="center">
                 <Button tabIndex={-1} size="4" highContrast variant="ghost">
                   <Text size="2">{user!.name}</Text>
                   <CaretDownIcon />
