@@ -7,24 +7,27 @@ import Register from './pages/Register';
 import Translation from './pages/Translation';
 import Recent from './pages/Recent';
 import FlashCard from './pages/FlashCard';
+import { CookiesProvider } from 'react-cookie';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route element={<PrivateRoute />}>
-            <Route element={<BaseLayout />}>
-              <Route index element={<Translation />} />
-              <Route path="/recent" element={<Recent />} />
-              <Route path="/flash" element={<FlashCard />} />
+    <CookiesProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<PrivateRoute />}>
+              <Route element={<BaseLayout />}>
+                <Route index element={<Translation />} />
+                <Route path="/recent" element={<Recent />} />
+                <Route path="/flash" element={<FlashCard />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </CookiesProvider>
   );
 }
 

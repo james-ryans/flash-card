@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { LocalIdentityService } from 'src/local_identity/local_identity.service';
@@ -31,6 +31,12 @@ export class AuthService {
         let user: User | undefined;
         const identity = await this.federatedIdentityService.findOneFromGoogle(id);
         if (!identity) {
+            user = await this.userService.findOneByEmail(email);
+            if (user) {
+                throw new UnauthorizedException(
+                    'User already registered with email/password',
+                );
+            }
             user = await this.userService.createGoogle(id, name, email);
         } else {
             user = await this.userService.findOne(identity.user_id);
@@ -42,7 +48,7 @@ export class AuthService {
     async registerLocalUser(name: string, email: string, password: string): Promise<User> {
         const user = await this.userService.findOneByEmail(email);
         if (user) {
-            throw new BadRequestException('This email already registered');
+            throw new BadRequestException('This email is already registered');
         }
 
         return await this.userService.createLocal(name, email, password);
