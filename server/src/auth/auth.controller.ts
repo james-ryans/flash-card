@@ -34,8 +34,13 @@ export class AuthController {
     }
 
     @Post('register')
-    async register(@Body() req: RegisterRequest): Promise<RegisterResponse> {
-        const user = await this.authService.registerLocalUser(req.name, req.email, req.password);
+    async register(@Req() req: Request, @Body() body: RegisterRequest): Promise<RegisterResponse> {
+        const user = await this.authService.registerLocalUser(body.name, body.email, body.password);
+        req.logIn(user, (err: Error) => {
+            if (err) {
+                throw err;
+            }
+        });
 
         return {
             data: new AuthUser(user),

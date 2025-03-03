@@ -8,13 +8,15 @@ function useValidation(app: INestApplication): void {
             whitelist: true,
             stopAtFirstError: true,
             exceptionFactory: (errors: ValidationError[]) => {
-                Logger.error(errors, 'ValidationPipe');
-                return new BadRequestException(errors.map((error: ValidationError) => {
-                    return {
-                        field: error.property,
-                        message: Object.values(error.constraints ?? {})[0] ?? 'Invalid',
-                    }
-                }), 'Invalid request data');
+                return new BadRequestException(
+                    errors.map((error: ValidationError) => {
+                        return {
+                            field: error.property,
+                            message: Object.values(error.constraints ?? {})[0] ?? 'Invalid',
+                        };
+                    }),
+                    'Invalid request data',
+                );
             },
         }),
     );
