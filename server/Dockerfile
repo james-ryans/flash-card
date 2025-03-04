@@ -45,11 +45,11 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Copy the bundled code from the builder stage
-COPY --from=builder --chown=node:node /app/dist ./dist
+COPY --from=builder --chown=node:node /app/dist .
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 
 # Use the node user from the image
 USER node
 
 # Start the server
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "src/main.js"]
