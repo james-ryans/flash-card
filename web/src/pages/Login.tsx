@@ -83,7 +83,7 @@ function Login() {
                 </Callout.Root>
               )}
               <Heading size="6">Sign In</Heading>
-              <Flex direction="column" gap="4" width="100%" asChild>
+              <Flex direction="column" gap="2" width="100%" asChild>
                 <Form.Root onSubmit={handleSubmit}>
                   <Form.Field name="email">
                     <Form.Label asChild>
@@ -144,7 +144,7 @@ function Login() {
                       </Text>
                     </Form.Message>
                   </Form.Field>
-                  <Box mt="4" asChild>
+                  <Box mt="2" asChild>
                     <Button size="3" type="submit" disabled={isLoading}>
                       Sign In
                       {isLoading && <LoadingIcon />}

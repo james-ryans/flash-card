@@ -20,7 +20,7 @@ type Action<T> =
   | { type: Status.Error; error: string };
 
 interface Query<T> extends State<T> {
-  update: (promise: Promise<T>) => Promise<T>;
+  update: (promise: Promise<T>) => Promise<void>;
   reset: () => void;
   isIdle: boolean;
   isLoading: boolean;
@@ -56,11 +56,9 @@ function useQuery<T = any>(initialState?: State<T>): Query<T> {
       return promise
         .then((data: T) => {
           dispatch({ type: Status.Success, data });
-          return data;
         })
         .catch((error: Error) => {
           dispatch({ type: Status.Error, error: error.message });
-          return Promise.reject(error);
         });
     },
     [dispatch],
