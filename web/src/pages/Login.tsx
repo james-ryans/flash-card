@@ -20,11 +20,13 @@ import { useNavigate } from 'react-router';
 import { useQuery } from '../hooks/useQuery';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { GoogleIcon } from '../assets/icons/GoogleIcon';
+import { useCookies } from 'react-cookie';
 
 function Login() {
   const navigate = useNavigate();
   const auth = useAuth();
 
+  const [cookies, _, removeCookie] = useCookies(['error']);
   const { isLoading, isSuccess, isError, error, update } = useQuery<void>();
   const [login, setLogin] = React.useState<LoginRequest>({
     email: '',
@@ -49,6 +51,15 @@ function Login() {
   };
 
   React.useEffect(() => {
+    const error: string = cookies.error ?? '';
+
+    if (error !== '') {
+      removeCookie('error');
+      update(Promise.reject(new Error(error)));
+    }
+  }, []);
+
+  React.useEffect(() => {
     if (auth.user) {
       navigate('/');
     }
@@ -58,7 +69,7 @@ function Login() {
     <Container className="h-screen bg-[#e4e4e4]">
       <Flex align="center" direction="column" asChild>
         <Box className="mx-auto w-lg">
-          <Heading size="8" className="py-8">
+          <Heading size="8" className="py-8" color="indigo" highContrast>
             Flash Card
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
@@ -72,7 +83,7 @@ function Login() {
                 </Callout.Root>
               )}
               <Heading size="6">Sign In</Heading>
-              <Flex direction="column" gap="4" width="100%" asChild>
+              <Flex direction="column" gap="2" width="100%" asChild>
                 <Form.Root onSubmit={handleSubmit}>
                   <Form.Field name="email">
                     <Form.Label asChild>
@@ -133,7 +144,7 @@ function Login() {
                       </Text>
                     </Form.Message>
                   </Form.Field>
-                  <Box mt="4" asChild>
+                  <Box mt="2" asChild>
                     <Button size="3" type="submit" disabled={isLoading}>
                       Sign In
                       {isLoading && <LoadingIcon />}
@@ -154,6 +165,9 @@ function Login() {
                   Google
                 </Button>
               </Box>
+              <Text size="1" color="gray">
+                Don't have an account? <Link href="/register">Register</Link>
+              </Text>
             </Flex>
           </Card>
         </Box>

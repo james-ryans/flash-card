@@ -1,3 +1,7 @@
+import { IsEmail, IsNotEmpty, MaxLength, MinLength } from "class-validator";
+import { IsEmailUnique } from "src/decorators/isEmailUnique.decorator";
+import { Match } from "src/decorators/match.decorator";
+
 export class AuthUser {
     name: string;
     email: string;
@@ -9,6 +13,27 @@ export class AuthUser {
 }
 
 export interface LoginResponse {
+    data?: AuthUser;
+    message: string;
+    statusCode: number;
+}
+
+export class RegisterRequest {
+    @IsNotEmpty()
+    name: string;
+    @IsEmailUnique()
+    @IsEmail({}, { message: 'Must be an email'})
+    @IsNotEmpty()
+    email: string;
+    @MaxLength(128)
+    @MinLength(6)
+    password: string;
+    @Match('password', { message: 'Passwords do not match' })
+    @IsNotEmpty({ message: 'Password confirmation is required' })
+    password_confirmation: string;
+}
+
+export interface RegisterResponse {
     data?: AuthUser;
     message: string;
     statusCode: number;

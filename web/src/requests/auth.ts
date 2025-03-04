@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, VerifyResponse } from '../models/auth';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, VerifyResponse } from '../models/auth';
 import { get, post } from './common';
 
 function login(request: LoginRequest): Promise<LoginResponse> {
@@ -15,8 +15,12 @@ function verify(): Promise<VerifyResponse> {
   return post('/auth/verify', {});
 }
 
+function register(request: RegisterRequest): Promise<RegisterResponse> {
+  return post('/auth/register', request);
+}
+
 function googleSignIn(): Promise<LoginResponse> {
   return get('/auth/google');
 }
 
-export { login, logout, verify, googleSignIn };
+export { login, logout, verify, register, googleSignIn };

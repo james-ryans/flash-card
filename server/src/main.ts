@@ -7,6 +7,7 @@ import session from 'express-session';
 import passport from 'passport';
 import process from 'process';
 import { Logger } from 'nestjs-pino';
+import { useValidation } from './validation';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -42,7 +43,7 @@ async function bootstrap() {
     );
     app.use(passport.initialize());
     app.use(passport.session());
-    app.useGlobalPipes(new ValidationPipe());
+    useValidation(app);
     await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap().catch((error) => {

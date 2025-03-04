@@ -1,13 +1,16 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local.guard';
 import { Request, Response } from 'express';
-import { AuthUser, LoginResponse, VerifyResponse } from './entities/auth.entity';
+import { AuthUser, LoginResponse, RegisterRequest, RegisterResponse, VerifyResponse } from './entities/auth.entity';
 import { Public } from 'src/guards/session.guard';
 import { GoogleOAuthGuard } from 'src/guards/google.guard';
+import { AuthService } from './auth.service';
 
 @Public()
 @Controller('auth')
 export class AuthController {
+    constructor(private authService: AuthService) {}
+
     @UseGuards(LocalAuthGuard)
     @Post('login')
     login(@Req() req: Request): LoginResponse {
@@ -28,6 +31,22 @@ export class AuthController {
     @Get('google/callback')
     googleAuthRedirect(@Res() res: Response): void {
         return res.redirect(process.env.CLIENT_BASE_URL!);
+    }
+
+    @Post('register')
+    async register(@Req() req: Request, @Body() body: RegisterRequest): Promise<RegisterResponse> {
+        const user = await this.authService.registerLocalUser(body.name, body.email, body.password);
+        req.logIn(user, (err: Error) => {
+            if (err) {
+                throw err;
+            }
+        });
+
+        return {
+            data: new AuthUser(user),
+            message: 'Registration successful',
+            statusCode: HttpStatus.CREATED,
+        };
     }
 
     @Post('logout')

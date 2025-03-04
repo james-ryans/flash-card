@@ -11,6 +11,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { LocalIdentityModule } from './local_identity/local_identity.module';
 import { FederatedIdentityModule } from './federated_identity/federated_identity.module';
 import pino from 'pino';
+import { IsEmailUnique, IsEmailUniqueConstraint } from './decorators/isEmailUnique.decorator';
 
 @Module({
     imports: [
@@ -41,6 +42,7 @@ import pino from 'pino';
         FederatedIdentityModule,
     ],
     providers: [
+        IsEmailUniqueConstraint,
         {
             provide: APP_GUARD,
             useClass: SessionAuthGuard,

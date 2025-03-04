@@ -1,23 +1,22 @@
 interface Request {}
 
-interface Response {
+interface SuccessResponse<T = any> {
+  data: T;
   message: string;
   statusCode: number;
 }
 
-interface SuccessResponse<T = any> extends Response {
-  data: T;
-}
+type ErrorResponse =
+  | {
+      message: string;
+      error?: string;
+      statusCode: 400 | 401 | 402 | 500;
+    }
+  | {
+      message: Array<{ field: string; message: string }>;
+      error: string;
+      statusCode: 422;
+    };
 
-interface ErrorResponse extends Response {
-  error: string;
-};
-
-const DEFAULT_ERROR_RESPONSE: ErrorResponse = {
-  message: 'An error occurred',
-  statusCode: 500,
-  error: 'INTERNAL_SERVER_ERROR',
-};
-
-export type { SuccessResponse, ErrorResponse, Response, Request };
-export { DEFAULT_ERROR_RESPONSE };
+export type { Request };
+export type { SuccessResponse, ErrorResponse };
