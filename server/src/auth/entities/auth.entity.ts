@@ -22,14 +22,14 @@ export class RegisterRequest {
     @IsNotEmpty()
     name: string;
     @IsEmailUnique()
-    @IsEmail({}, { message: 'must be an email'})
+    @IsEmail({}, { message: 'Must be an email'})
     @IsNotEmpty()
     email: string;
     @MaxLength(128)
     @MinLength(6)
     password: string;
-    @Match('password', { message: 'passwords do not match' })
-    @IsNotEmpty({ message: 'password confirmation is required' })
+    @Match('password', { message: 'Passwords do not match' })
+    @IsNotEmpty({ message: 'Password confirmation is required' })
     password_confirmation: string;
 }
 

@@ -1,32 +1,64 @@
-import { Box, Button, Callout, Card, Container, Flex, Heading, Link, Separator, Text, TextField } from '@radix-ui/themes';
+import {
+  Box,
+  Button,
+  Callout,
+  Card,
+  Container,
+  Flex,
+  Heading,
+  Link,
+  Separator,
+  Text,
+  TextField,
+} from '@radix-ui/themes';
 import { Form } from 'radix-ui';
 import React from 'react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useAuth } from '../contexts/auth';
-import { RegisterRequest } from '../models/auth';
 import { useNavigate } from 'react-router';
-import { useQuery } from '../hooks/useQuery';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { GoogleIcon } from '../assets/icons/GoogleIcon';
+import { useForm } from '../hooks/useForm';
+import { z } from 'zod';
+
+const registerSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'Name must contain at least 2 characters')
+      .max(128, 'Name must not exceed 128 characters')
+      .nonempty('Name is required'),
+    email: z.string().email('Invalid email address').nonempty('Email is required'),
+    password: z
+      .string()
+      .min(8, 'Password must contain at least 8 characters')
+      .max(128, 'Password must not exceed 128 characters')
+      .nonempty('Password is required'),
+    password_confirmation: z.string().nonempty('Password confirmation is required'),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'Passwords do not match',
+    path: ['password_confirmation'],
+  });
+
+type RegisterForm = z.infer<typeof registerSchema>;
 
 function Register() {
   const navigate = useNavigate();
   const auth = useAuth();
 
-  const { isLoading, isSuccess, isError, error, update } = useQuery<void>();
-  const [register, setRegister] = React.useState<RegisterRequest>({
-    email: '',
-    password: '',
-    password_confirmation: '',
-  });
+  const { isLoading, isSuccess, isError, data, error, errors, handleChange, handleSubmit } = useForm<RegisterForm>(
+    registerSchema,
+    {
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+    },
+  );
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (isLoading || isSuccess) {
-      return;
-    }
-    update(auth.register(register).then());
+  const onSubmit = async (data: RegisterForm) => {
+    await auth.register(data);
   };
 
   const handleGoogleSignIn = () => {
@@ -51,8 +83,8 @@ function Register() {
             Flash Card
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
-            <Flex align="center" gap="4" direction="column">
-              {isError && (
+            <Flex align="center" gap="3" direction="column">
+              {isError && !!error && (
                 <Callout.Root color="red" className="w-full">
                   <Callout.Icon>
                     <InfoCircledIcon />
@@ -61,37 +93,48 @@ function Register() {
                 </Callout.Root>
               )}
               <Heading size="6">Register</Heading>
-              <Flex direction="column" gap="4" width="100%" asChild>
-                <Form.Root onSubmit={handleSubmit}>
+              <Flex direction="column" gap="2" width="100%" asChild>
+                <Form.Root onSubmit={handleSubmit(onSubmit)}>
+                  <Form.Field name="name">
+                    <Form.Label asChild>
+                      <Text size="1" weight="medium" as="label">
+                        Name
+                      </Text>
+                    </Form.Label>
+                    <Form.Control asChild>
+                      <TextField.Root
+                        size="3"
+                        color={!!errors?.name ? 'red' : undefined}
+                        placeholder="Name"
+                        value={data.name}
+                        onChange={(event) => handleChange('name', event.target.value)}
+                      />
+                    </Form.Control>
+                    <Form.Message forceMatch={!!errors?.name} asChild>
+                      <Text size="1" as="label" color="red">
+                        {errors?.name}
+                      </Text>
+                    </Form.Message>
+                  </Form.Field>
                   <Form.Field name="email">
                     <Form.Label asChild>
                       <Text size="1" weight="medium" as="label">
                         Email
                       </Text>
                     </Form.Label>
-                    <Form.ValidityState>
-                      {(validity) => (
-                        <Form.Control asChild>
-                          <TextField.Root
-                            size="3"
-                            color={validity?.valueMissing || validity?.typeMismatch ? 'red' : undefined}
-                            placeholder="Email"
-                            type="email"
-                            value={register.email}
-                            onChange={(event) => setRegister({ ...register, email: event.target.value })}
-                            required
-                          />
-                        </Form.Control>
-                      )}
-                    </Form.ValidityState>
-                    <Form.Message match="valueMissing" asChild>
+                    <Form.Control asChild>
+                      <TextField.Root
+                        size="3"
+                        color={!!errors?.email ? 'red' : undefined}
+                        placeholder="Email"
+                        type="email"
+                        value={data.email}
+                        onChange={(event) => handleChange('email', event.target.value)}
+                      />
+                    </Form.Control>
+                    <Form.Message forceMatch={!!errors?.email} asChild>
                       <Text size="1" as="label" color="red">
-                        Please enter your email
-                      </Text>
-                    </Form.Message>
-                    <Form.Message match="typeMismatch" asChild>
-                      <Text size="1" as="label" color="red">
-                        Please enter a valid email
+                        {errors?.email}
                       </Text>
                     </Form.Message>
                   </Form.Field>
@@ -101,24 +144,19 @@ function Register() {
                         Password
                       </Text>
                     </Form.Label>
-                    <Form.ValidityState>
-                      {(validity) => (
-                        <Form.Control asChild>
-                          <TextField.Root
-                            size="3"
-                            color={validity?.valueMissing ? 'red' : undefined}
-                            placeholder="Password"
-                            type="password"
-                            value={register.password}
-                            onChange={(event) => setRegister({ ...register, password: event.target.value })}
-                            required
-                          />
-                        </Form.Control>
-                      )}
-                    </Form.ValidityState>
-                    <Form.Message match="valueMissing" asChild>
+                    <Form.Control asChild>
+                      <TextField.Root
+                        size="3"
+                        color={!!errors?.password ? 'red' : undefined}
+                        placeholder="Password"
+                        type="password"
+                        value={data.password}
+                        onChange={(event) => handleChange('password', event.target.value)}
+                      />
+                    </Form.Control>
+                    <Form.Message forceMatch={!!errors?.password} asChild>
                       <Text size="1" as="label" color="red">
-                        Please enter a password
+                        {errors?.password}
                       </Text>
                     </Form.Message>
                   </Form.Field>
@@ -128,35 +166,23 @@ function Register() {
                         Confirm Password
                       </Text>
                     </Form.Label>
-                    <Form.ValidityState>
-                      {(validity: ValidityState | undefined) => (
-                        <Form.Control asChild>
-                          <TextField.Root
-                            size="3"
-                            color={validity?.valueMissing || validity?.customError ? 'red' : undefined}
-                            placeholder="Confirm password"
-                            type="password"
-                            value={register.password_confirmation}
-                            onChange={(event) =>
-                              setRegister({ ...register, password_confirmation: event.target.value })
-                            }
-                            required
-                          />
-                        </Form.Control>
-                      )}
-                    </Form.ValidityState>
-                    <Form.Message match="valueMissing" asChild>
+                    <Form.Control asChild>
+                      <TextField.Root
+                        size="3"
+                        color={!!errors?.password_confirmation ? 'red' : undefined}
+                        placeholder="Confirm password"
+                        type="password"
+                        value={data.password_confirmation}
+                        onChange={(event) => handleChange('password_confirmation', event.target.value)}
+                      />
+                    </Form.Control>
+                    <Form.Message forceMatch={!!errors?.password_confirmation} asChild>
                       <Text size="1" as="label" color="red">
-                        Please enter your password again
-                      </Text>
-                    </Form.Message>
-                    <Form.Message match={(value) => value !== register.password} asChild>
-                      <Text size="1" as="label" color="red">
-                        Passwords do not match
+                        {errors?.password_confirmation}
                       </Text>
                     </Form.Message>
                   </Form.Field>
-                  <Box mt="4" asChild>
+                  <Box mt="2" asChild>
                     <Button size="3" type="submit" disabled={isLoading}>
                       Register
                       {isLoading && <LoadingIcon />}
