@@ -76,10 +76,9 @@ function Register() {
   }, [auth.user]);
 
   return (
-    <Container className="h-screen bg-[#e4e4e4]">
-      <Flex align="center" direction="column" asChild>
-        <Box className="mx-auto w-lg">
-          <Heading size="8" className="py-8" color="indigo" highContrast>
+    <Container className="min-h-screen bg-[#e4e4e4]">
+      <Flex align="center" direction="column" py="8" gap="8" className='mx-auto w-lg'>
+          <Heading size="8" color="indigo" highContrast>
             Flash Card
           </Heading>
           <Card variant="surface" size="3" className="w-full rounded-xl shadow-[var(--shadow-3)]">
@@ -208,7 +207,6 @@ function Register() {
               </Box>
             </Flex>
           </Card>
-        </Box>
       </Flex>
     </Container>
   );
