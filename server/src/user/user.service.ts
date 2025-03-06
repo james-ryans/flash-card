@@ -13,12 +13,12 @@ export class UserService {
     }
 
     async findOneByEmail(email: string): Promise<User | undefined> {
-        return await this.knex.table('users').where('email', email).first<User>();
+        return await this.knex.table('users').where('email', email.toLowerCase()).first<User>();
     }
 
     async createLocal(name: string, email: string, password: string): Promise<User> {
         return this.knex.transaction(async (trx) => {
-            const user = await trx.table('users').insert({ name, email }).returning<User[]>('*');
+            const user = await trx.table('users').insert({ name, email: email.toLowerCase() }).returning<User[]>('*');
             await trx.table('local_identities').insert({ user_id: user[0].id, password: bcrypt.hashSync(password, 10) });
 
             return user[0];
@@ -27,7 +27,7 @@ export class UserService {
 
     async createGoogle(id: string, name: string, email: string): Promise<User> {
         return this.knex.transaction(async (trx) => {
-            const user = await trx.table('users').insert({ name, email }).returning<User[]>('*');
+            const user = await trx.table('users').insert({ name, email: email.toLowerCase() }).returning<User[]>('*');
             await trx.table('federated_identities').insert({ user_id: user[0].id, provider: 'google', subject: id });
 
             return user[0];
