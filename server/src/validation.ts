@@ -2,6 +2,10 @@ import { INestApplication, UnprocessableEntityException, ValidationPipe } from '
 import { AppModule } from './app.module';
 import { useContainer, ValidationError } from 'class-validator';
 
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 function useValidation(app: INestApplication): void {
     app.useGlobalPipes(
         new ValidationPipe({
@@ -11,11 +15,15 @@ function useValidation(app: INestApplication): void {
                 const errors = e.map((error: ValidationError) => {
                     return {
                         field: error.property,
-                        message: Object.values(error.constraints ?? {})[0] ?? 'Invalid',
+                        message: capitalizeFirstLetter(Object.values(error.constraints ?? {})[0] ?? 'invalid'),
                     };
-                })
-                
-                return new UnprocessableEntityException(errors, errors[0].message + (errors.length > 1 ? ` (+${errors.length} more)` : ""),
+                });
+
+                return new UnprocessableEntityException(
+                    errors,
+                    capitalizeFirstLetter(
+                        errors[0].message + (errors.length > 1 ? ` (+${errors.length - 1} more)` : ''),
+                    ),
                 );
             },
         }),
