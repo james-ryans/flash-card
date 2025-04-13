@@ -12,6 +12,7 @@ import { LocalIdentityModule } from './local_identity/local_identity.module';
 import { FederatedIdentityModule } from './federated_identity/federated_identity.module';
 import pino from 'pino';
 import { IsEmailUnique, IsEmailUniqueConstraint } from './decorators/isEmailUnique.decorator';
+import { SpeechModule } from './speech/speech.module';
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { IsEmailUnique, IsEmailUniqueConstraint } from './decorators/isEmailUniq
         RecentModule,
         LocalIdentityModule,
         FederatedIdentityModule,
+        SpeechModule,
     ],
     providers: [
         IsEmailUniqueConstraint,

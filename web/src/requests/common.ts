@@ -9,7 +9,7 @@ function req<T = any>(promise: Promise<AxiosResponse<SuccessResponse>>): Promise
     })
     .catch((axiosError: AxiosError<ErrorResponse>) => {
       if (!axiosError.response) {
-        throw new ApiError("Network error. Please try again.", 500);
+        throw new ApiError('Network error. Please try again.', 500);
       }
 
       const { statusCode, message, error } = axiosError.response?.data;
@@ -20,6 +20,14 @@ function req<T = any>(promise: Promise<AxiosResponse<SuccessResponse>>): Promise
           throw new ApiError(message, statusCode, error);
       }
     });
+}
+
+function getUri(api: string, params: object): string {
+  return axios.getUri({
+    withCredentials: true,
+    url: import.meta.env.VITE_SERVER_BASE_URL + api,
+    params: params,
+  });
 }
 
 function get<T = any>(api: string, headers: RawAxiosRequestHeaders = {}): Promise<SuccessResponse<T>> {
@@ -34,4 +42,4 @@ function post<T = any>(
   return req(axios.post(import.meta.env.VITE_SERVER_BASE_URL + api, request, { headers, withCredentials: true }));
 }
 
-export { get, post };
+export { getUri, get, post };

@@ -1,12 +1,13 @@
 import React from 'react';
-import { Box, Flex, Grid, Text, Theme } from '@radix-ui/themes';
+import { Box, Flex, Grid, IconButton, Text, Theme } from '@radix-ui/themes';
 import { Form, VisuallyHidden } from 'radix-ui';
-import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { ChevronRightIcon, Cross1Icon, ExclamationTriangleIcon, SpeakerLoudIcon } from '@radix-ui/react-icons';
 import { LoadingIcon } from '../assets/icons/LoadingIcon';
 import { translate } from '../requests/translation';
 import { Status, useQuery } from '../hooks/useQuery';
 import { Language } from '../models/translation';
 import { useLocation } from 'react-router';
+import { speechUri } from '../requests/speech';
 
 type TextTranslationHandle = {
   text: () => string;
@@ -24,6 +25,7 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
   const initialTranslation = location.state?.translation ?? '';
 
   const [text, setText] = React.useState(initialText);
+  const [audio, setAudio] = React.useState<string | null>(null);
   const { isIdle, isLoading, isSuccess, isError, data, error, update, reset } = useQuery<string>({
     status: initialTranslation === '' ? Status.Idle : Status.Success,
     data: initialTranslation,
@@ -49,6 +51,7 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
 
     update(translate({ text, from: Language.EN, to: Language.ID })).then(() => {
       onSubmitSuccess?.();
+      setAudio(text);
     });
 
     inputRef.current?.select();
@@ -56,10 +59,23 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value.replace(/ /g, ''));
+    setAudio(null);
+  };
+
+  const handleAudio = (event: React.FormEvent) => {
+    event.preventDefault();
+    
+    if (!audio || audio == '') {
+      return;
+    }
+
+    const sound = new Audio(speechUri(audio));
+    sound.play();
   };
 
   const handleReset = () => {
     setText('');
+    setAudio(null);
     reset();
   };
 
@@ -80,12 +96,19 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
             <Form.Control asChild>
               <input
                 ref={inputRef}
-                className="h-32 w-full rounded-sm border border-gray-300 p-8 text-[35px] data-invalid:border-red-500 data-invalid:outline-red-500"
+                className="h-40 w-full rounded-sm border border-gray-300 p-8 text-[35px] data-invalid:border-red-500 data-invalid:outline-red-500"
                 value={text}
                 onChange={handleInput}
                 required
               />
             </Form.Control>
+            {audio && (
+              <Flex className="absolute bottom-5 left-5">
+                <IconButton size="4" radius="full" variant="ghost" color="gray" highContrast onClick={handleAudio}>
+                  <SpeakerLoudIcon width="18" height="18" />
+                </IconButton>
+              </Flex>
+            )}
             {text !== '' && (
               <button
                 className="absolute top-4 right-4 rounded-sm p-2 hover:bg-gray-100"
@@ -101,7 +124,7 @@ function TextTranslation({ refs, onSubmitSuccess }: TextTranslationProps) {
           </Flex>
         </Form.Field>
         <Flex
-          height="128px"
+          height="160px"
           width="full"
           align="center"
           justify={!isError ? 'start' : 'center'}
